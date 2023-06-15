@@ -5,7 +5,7 @@ class ASMediaWindow: NSWindow {
     init(withMediaItem item: ASMediaItem, contentRect: NSRect, styleMask style: NSWindow.StyleMask, backing backingStoreType: NSWindow.BackingStoreType, defer flag: Bool) {
         super.init(contentRect: contentRect, styleMask: style, backing: backingStoreType, defer: flag)
         self.title = item.title
-        self.setFrameAutosaveName(title + "-" + item.id.uuidString)
+        self.contentViewController = ASMediaViewController(withMediaItem: item)
         self.delegate = self
     }
 }
