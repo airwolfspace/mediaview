@@ -44,7 +44,7 @@ public class ASMediaManager: NSObject {
     // MARK: -
 
     private func addWindowController(withPhotoURLs photoURLs: [URL]?, videoURLs: [URL]?, audioURLs: [URL]?, title: String, andID id: UUID) {
-        let mediaItem = ASMediaItem(id: id, title: title)
+        let mediaItem = ASMediaItem(id: id, title: title, photoURLs: photoURLs, videoURLs: videoURLs, audioURLs: audioURLs)
         guard windowControllers.first(where: { $0.windowID() == mediaItem.id }) == nil else { return }
         let controller = ASMediaWindowController(withMediaItem: mediaItem)
         windowControllers.append(controller)
