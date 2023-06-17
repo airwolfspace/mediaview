@@ -1,8 +1,8 @@
-//
-//  File.swift
-//  
-//
-//  Created by Kai Luo on 6/17/23.
-//
+import Cocoa
 
-import Foundation
+
+extension NSWindow {
+    var titlebarHeight: CGFloat {
+        frame.height - contentRect(forFrameRect: frame).height
+    }
+}

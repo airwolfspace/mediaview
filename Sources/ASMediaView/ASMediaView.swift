@@ -14,13 +14,13 @@ struct ASMediaView: View {
                             Image(nsImage: image)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(maxWidth: image.size.width, maxHeight: image.size.height)
                         }
                     }
                 }
             } else {
                 VStack {
-                    Text("Hello, Media View.")
+                    Text("No content.")
+                        .foregroundColor(.secondary)
                 }
                 .padding()
             }
