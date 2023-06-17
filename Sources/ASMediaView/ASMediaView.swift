@@ -34,11 +34,22 @@ struct ASMediaView: View {
                         .opacity(isHover ? 1.0 : 0.0)
                 }
             }
-            .onHover { hover in
-                withAnimation(.easeInOut(duration: 0.15)) {
-                    self.isHover = hover
+            .onReceive(NotificationCenter.default.publisher(for: .mouseEntered), perform: { _ in
+                guard self.isHover == false else { return }
+                Task { @MainActor in
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        self.isHover = true
+                    }
                 }
-            }
+            })
+            .onReceive(NotificationCenter.default.publisher(for: .mouseExited), perform: { _ in
+                guard self.isHover == true else { return }
+                Task { @MainActor in
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        self.isHover = false
+                    }
+                }
+            })
         } else {
             noContentView()
         }
