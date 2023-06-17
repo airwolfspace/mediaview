@@ -15,7 +15,18 @@ class ASMediaWindow: NSWindow {
             guard let value = n.object as? NSValue else { return }
             let deltaWidth = self.frame.size.width - value.sizeValue.width
             let deltaHeight = self.frame.size.height - value.sizeValue.height
-            let updatedOrigin = NSPoint(x: self.frame.origin.x + deltaWidth, y: self.frame.origin.y + deltaHeight)
+            let updatedOrigin: NSPoint
+            if deltaWidth > 0 {
+                if deltaHeight > 0 {
+                    updatedOrigin = NSPoint(x: self.frame.origin.x + deltaWidth * 0.5, y: self.frame.origin.y + deltaHeight * 0.5)
+                } else {
+                    updatedOrigin = NSPoint(x: self.frame.origin.x + deltaWidth * 0.5, y: self.frame.origin.y - deltaHeight * 0.5)
+                }
+            } else {
+                let normalWindow = NSWindow(contentRect: .init(origin: .zero, size: self.frame.size), styleMask: [.titled], backing: .buffered, defer: true)
+                let titlebarHeight = normalWindow.titlebarHeight
+                updatedOrigin = NSPoint(x: self.frame.origin.x + deltaWidth * 0.5, y: self.frame.origin.y + titlebarHeight + deltaHeight * 0.5)
+            }
             let updatedFrame = NSRect(origin: updatedOrigin, size: value.sizeValue)
             DispatchQueue.main.async {
                 self.setFrame(updatedFrame, display: true, animate: true)
