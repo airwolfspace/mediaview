@@ -11,6 +11,16 @@ class ASMediaWindow: NSWindow {
         self.collectionBehavior = .fullScreenNone
         self.contentViewController = ASMediaViewController(withMediaItem: item)
         self.delegate = self
+        NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { n in
+            guard let value = n.object as? NSValue else { return }
+            let deltaWidth = self.frame.size.width - value.sizeValue.width
+            let deltaHeight = self.frame.size.height - value.sizeValue.height
+            let updatedOrigin = NSPoint(x: self.frame.origin.x + deltaWidth, y: self.frame.origin.y + deltaHeight)
+            let updatedFrame = NSRect(origin: updatedOrigin, size: value.sizeValue)
+            DispatchQueue.main.async {
+                self.setFrame(updatedFrame, display: true, animate: true)
+            }
+        }
     }
 }
 

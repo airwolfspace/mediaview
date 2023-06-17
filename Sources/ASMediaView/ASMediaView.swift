@@ -4,11 +4,11 @@ import SwiftUI
 struct ASMediaView: View {
     var item: ASMediaItem
     
+    @State private var currentMinSize: NSSize = .zero
     @State private var currentPhotoIndex: Int = 0
     @State private var isHover: Bool = false
 
     var body: some View {
-        let minSize = item.bestWindowMinSize()
         Group {
             if let urls = item.photoURLs, urls.count > 0 {
                 photosView(urls: urls)
@@ -16,8 +16,11 @@ struct ASMediaView: View {
                 noContentView()
             }
         }
-        .frame(minWidth: minSize.width, minHeight: minSize.height)
+        .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
         .edgesIgnoringSafeArea(.top)
+        .task {
+            currentMinSize = self.item.bestWindowMinSize()
+        }
     }
     
     @ViewBuilder
@@ -127,6 +130,15 @@ struct ASMediaView: View {
             currentPhotoIndex = urls.count - 1
         } else {
             currentPhotoIndex = updatedCurrentIndex
+        }
+        Task { @MainActor in
+            if let image = NSImage(contentsOf: urls[currentPhotoIndex]) {
+                currentMinSize = self.item.bestWindowMinSize(forTargetSize: image.size)
+            } else {
+                currentMinSize = self.item.bestWindowMinSize()
+            }
+            let value = NSValue(size: currentMinSize)
+            NotificationCenter.default.post(name: .viewSizeChanged(byID: self.item.id), object: value)
         }
     }
 }
