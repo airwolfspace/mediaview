@@ -17,7 +17,7 @@ struct ContentView: View {
         let earthDay = Bundle.main.urlForImageResource("earth-day")!
         let ph = Bundle.main.urlForImageResource("PH")!
 
-        VStack {
+        VStack (spacing: 20) {
             Button {
                 ASMediaManager.shared.activatePhotoView(withPhotos: [earthDay], title: "Hello, One Photo Sample", andID: Self.oneID)
             } label: {
@@ -27,6 +27,12 @@ struct ContentView: View {
                 ASMediaManager.shared.activatePhotoView(withPhotos: [earthDay, ph], title: "Hello, Multiple Photos Sample", andID: Self.multipleID)
             } label: {
                 Text("Multiple Photos Sample")
+            }
+            Divider()
+            Button {
+                ASMediaManager.shared.deactivateAll()
+            } label: {
+                Text("Close All Views")
             }
         }
         .padding()
