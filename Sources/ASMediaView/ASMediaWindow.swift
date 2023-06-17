@@ -33,6 +33,10 @@ class ASMediaWindow: NSWindow {
             }
         }
     }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
 }
 
 
