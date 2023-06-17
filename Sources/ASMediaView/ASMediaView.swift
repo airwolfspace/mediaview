@@ -5,6 +5,7 @@ struct ASMediaView: View {
     var item: ASMediaItem
 
     var body: some View {
+        let minSize = item.bestWindowMinSize()
         Group {
             if let urls = item.photoURLs {
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -24,6 +25,7 @@ struct ASMediaView: View {
                 .padding()
             }
         }
-        .frame(minWidth: 480, minHeight: 320)
+        .frame(minWidth: minSize.width, minHeight: minSize.height)
+        .edgesIgnoringSafeArea(.top)
     }
 }

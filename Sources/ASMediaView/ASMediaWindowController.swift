@@ -6,10 +6,10 @@ class ASMediaWindowController: NSWindowController {
 
     init(withMediaItem item: ASMediaItem) {
         self.mediaItem = item
-        let windowMinSize = NSSize(width: 480, height: 320)
+        let windowMinSize = item.bestWindowMinSize()
         let windowMaxSize = NSScreen.main?.frame.size ?? windowMinSize
         let windowRect = NSMakeRect(0, 0, windowMinSize.width, windowMinSize.height)
-        let aWindow = ASMediaWindow(withMediaItem: item, contentRect: windowRect, styleMask: [.miniaturizable, .closable, .resizable, .titled], backing: .buffered, defer: true)
+        let aWindow = ASMediaWindow(withMediaItem: item, contentRect: windowRect)
         aWindow.minSize = windowMinSize
         aWindow.maxSize = windowMaxSize
         super.init(window: aWindow)
