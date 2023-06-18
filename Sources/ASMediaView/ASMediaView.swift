@@ -120,22 +120,14 @@ struct ASMediaView: View {
     private func updateIndex(byValue value: Int, forURLs urls: [URL]) {
         let currentIndex = currentPhotoIndex
         let updatedCurrentIndex = currentIndex + value
-        if updatedCurrentIndex > urls.count - 1 {
-            currentPhotoIndex = 0
-        } else if updatedCurrentIndex < 0 {
-            currentPhotoIndex = urls.count - 1
-        } else {
-            currentPhotoIndex = updatedCurrentIndex
-        }
         Task { @MainActor in
-            /*
-             * Disabled window resizing animation
-            if let image = NSImage(contentsOf: urls[currentPhotoIndex]) {
-                currentMinSize = self.item.bestWindowMinSize(forTargetSize: image.size)
+            if updatedCurrentIndex > urls.count - 1 {
+                currentPhotoIndex = 0
+            } else if updatedCurrentIndex < 0 {
+                currentPhotoIndex = urls.count - 1
             } else {
-                currentMinSize = self.item.bestWindowMinSize()
+                currentPhotoIndex = updatedCurrentIndex
             }
-             */
             let value = NSValue(size: currentMinSize)
             NotificationCenter.default.post(name: .viewSizeChanged(byID: self.item.id), object: value)
         }
