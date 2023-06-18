@@ -40,17 +40,13 @@ struct ASMediaView: View {
             .onReceive(NotificationCenter.default.publisher(for: .mouseEntered), perform: { _ in
                 guard self.isHover == false else { return }
                 Task { @MainActor in
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        self.isHover = true
-                    }
+                    self.isHover = true
                 }
             })
             .onReceive(NotificationCenter.default.publisher(for: .mouseExited), perform: { _ in
                 guard self.isHover == true else { return }
                 Task { @MainActor in
-                    withAnimation(.easeInOut(duration: 0.15)) {
-                        self.isHover = false
-                    }
+                    self.isHover = false
                 }
             })
         } else {
