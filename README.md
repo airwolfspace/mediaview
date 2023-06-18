@@ -18,17 +18,23 @@ struct ContentView: View {
         let ph = Bundle.main.urlForImageResource("PH")!
 
         VStack (spacing: 20) {
+            // Launch media view for single image:
             Button {
                 ASMediaManager.shared.activatePhotoView(withPhotos: [earthDay], title: "Hello, One Photo Sample", andID: Self.oneID)
             } label: {
                 Text("One Photo Sample")
             }
+            
+            // Launch media view for multiple images:
             Button {
                 ASMediaManager.shared.activatePhotoView(withPhotos: [earthDay, ph], title: "Hello, Multiple Photos Sample", andID: Self.multipleID)
             } label: {
                 Text("Multiple Photos Sample")
             }
+            
             Divider()
+            
+            // Close all media views:
             Button {
                 ASMediaManager.shared.deactivateAll()
             } label: {
