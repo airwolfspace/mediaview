@@ -1,6 +1,6 @@
 # ASMediaView
 
-A window controller based media viewer for photos, videos and audios, for macOS.
+A window controller based media viewer for local photos, videos and audios, for macOS.
 
 
 ## How to use
