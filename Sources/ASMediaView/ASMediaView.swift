@@ -128,11 +128,14 @@ struct ASMediaView: View {
             currentPhotoIndex = updatedCurrentIndex
         }
         Task { @MainActor in
+            /*
+             * Disabled window resizing animation
             if let image = NSImage(contentsOf: urls[currentPhotoIndex]) {
                 currentMinSize = self.item.bestWindowMinSize(forTargetSize: image.size)
             } else {
                 currentMinSize = self.item.bestWindowMinSize()
             }
+             */
             let value = NSValue(size: currentMinSize)
             NotificationCenter.default.post(name: .viewSizeChanged(byID: self.item.id), object: value)
         }
