@@ -34,10 +34,10 @@ class ASMediaViewController: NSViewController {
     }
     
     override func mouseEntered(with event: NSEvent) {
-        NotificationCenter.default.post(name: .mouseEntered, object: nil)
+        NotificationCenter.default.post(name: .mouseEntered(byID: self.mediaItem.id), object: nil)
     }
     
     override func mouseExited(with event: NSEvent) {
-        NotificationCenter.default.post(name: .mouseExited, object: nil)
+        NotificationCenter.default.post(name: .mouseExited(byID: self.mediaItem.id), object: nil)
     }
 }

@@ -44,13 +44,13 @@ struct ASMediaView: View {
                         .opacity(isHover ? 1.0 : 0.0)
                 }
             }
-            .onReceive(NotificationCenter.default.publisher(for: .mouseEntered), perform: { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .mouseEntered(byID: self.item.id)), perform: { _ in
                 guard self.isHover == false else { return }
                 Task { @MainActor in
                     self.isHover = true
                 }
             })
-            .onReceive(NotificationCenter.default.publisher(for: .mouseExited), perform: { _ in
+            .onReceive(NotificationCenter.default.publisher(for: .mouseExited(byID: self.item.id)), perform: { _ in
                 guard self.isHover == true else { return }
                 Task { @MainActor in
                     self.isHover = false
