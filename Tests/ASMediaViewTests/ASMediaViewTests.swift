@@ -28,6 +28,8 @@ final class ASMediaViewTests: XCTestCase {
         await ASMediaManager.shared.activatePhotoView(withPhotos: Self.testMediaItemPhotos, title: Self.testMediaItemPhotosTitle, andID: Self.testMediaItemID)
         let openWindow = await ASMediaManager.shared.windowControllers.first?.window
         XCTAssertNotNil(openWindow)
+        let openWindowTitle = await openWindow?.title
+        XCTAssertEqual(openWindowTitle, Self.testMediaItemPhotosTitle)
         await ASMediaManager.shared.deactivateView(byID: Self.testMediaItemID)
         let closeWindow = await ASMediaManager.shared.windowControllers.first?.window
         XCTAssertNil(closeWindow)
