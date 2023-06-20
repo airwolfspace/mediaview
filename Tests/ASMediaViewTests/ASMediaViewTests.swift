@@ -18,7 +18,7 @@ final class ASMediaViewTests: XCTestCase {
         let mediaWindowController = ASMediaWindowController(withMediaItem: mediaItem)
         mediaWindowController.showWindow(nil)
         let window = mediaWindowController.window
-        XCTAssertNil(window)
+        XCTAssertNotNil(window)
         XCTAssertEqual(mediaWindowController.windowID(), mediaItem.id)
         XCTAssertEqual(window?.title, mediaItem.title)
         XCTAssertEqual(window?.minSize, Self.mediaViewMinSize)
