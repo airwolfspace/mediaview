@@ -15,20 +15,20 @@ struct ASMediaItem: Identifiable {
             let titlebarHeight = normalWindow.titlebarHeight
             if CGSizeEqualToSize(targetSize, .zero) {
                 let screenSize = NSScreen.main?.frame.size ?? windowMinSize
-                let screenIsLandscape: Bool = screenSize.width > screenSize.height
                 let photoRatio = firstPhoto.size.width / firstPhoto.size.height
+                let photoIsLandscape: Bool = firstPhoto.size.width > firstPhoto.size.height
                 if !CGSizeEqualToSize(screenSize, windowMinSize) {
-                    if screenIsLandscape {
-                        if firstPhoto.size.width < screenSize.width / 2.0 {
+                    if photoIsLandscape {
+                        if firstPhoto.size.width <= screenSize.width / 2.0 {
                             return NSSize(width: firstPhoto.size.width, height: firstPhoto.size.height - titlebarHeight)
-                        } else  {
+                        } else {
                             return NSSize(width: screenSize.width / 2.0, height: screenSize.width / 2.0 / photoRatio - titlebarHeight)
                         }
                     } else {
-                        if firstPhoto.size.width > screenSize.width {
-                            return NSSize(width: screenSize.width, height: screenSize.width / photoRatio - titlebarHeight)
-                        } else {
+                        if firstPhoto.size.height <= screenSize.height / 2.0 {
                             return NSSize(width: firstPhoto.size.width, height: firstPhoto.size.height - titlebarHeight)
+                        } else {
+                            return NSSize(width: screenSize.height / 2.0 * photoRatio, height: screenSize.height / 2.0 - titlebarHeight)
                         }
                     }
                 }
