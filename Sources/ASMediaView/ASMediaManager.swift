@@ -40,8 +40,15 @@ public class ASMediaManager: NSObject {
             return false
         })
     }
+    
+    // MARK: - internal
+    func centerWindowPosition(byID id: UUID) {
+        if let controller = windowControllers.first(where: { $0.windowID() == id }), let window = controller.window {
+            window.positionCenter()
+        }
+    }
 
-    // MARK: -
+    // MARK: - private
 
     private func addWindowController(withPhotoURLs photoURLs: [URL]?, videoURLs: [URL]?, audioURLs: [URL]?, title: String, andID id: UUID) {
         guard windowControllers.first(where: { $0.windowID() == id }) == nil else { return }

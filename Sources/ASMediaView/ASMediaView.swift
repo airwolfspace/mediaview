@@ -4,9 +4,16 @@ import SwiftUI
 struct ASMediaView: View {
     var item: ASMediaItem
     
-    @State private var currentMinSize: NSSize = .zero
-    @State private var currentPhotoIndex: Int = 0
-    @State private var isHover: Bool = false
+    @State private var currentMinSize: NSSize
+    @State private var currentPhotoIndex: Int
+    @State private var isHover: Bool
+    
+    init(withItem item: ASMediaItem) {
+        self.item = item
+        _currentMinSize = State(initialValue: item.bestWindowMinSize())
+        _currentPhotoIndex = State(initialValue: 0)
+        _isHover = State(initialValue: false)
+    }
 
     var body: some View {
         Group {
@@ -19,7 +26,7 @@ struct ASMediaView: View {
         .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
         .edgesIgnoringSafeArea(.top)
         .task {
-            currentMinSize = self.item.bestWindowMinSize()
+            ASMediaManager.shared.centerWindowPosition(byID: self.item.id)
         }
     }
     

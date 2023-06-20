@@ -16,7 +16,7 @@ class ASMediaViewController: NSViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let contentView = NSHostingView(rootView: ASMediaView(item: mediaItem))
+        let contentView = NSHostingView(rootView: ASMediaView(withItem: mediaItem))
         contentView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(contentView)
         contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true

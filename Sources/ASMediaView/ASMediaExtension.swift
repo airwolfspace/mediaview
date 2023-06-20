@@ -3,7 +3,13 @@ import Cocoa
 
 extension NSWindow {
     var titlebarHeight: CGFloat {
-        frame.height - contentRect(forFrameRect: frame).height
+        return self.frame.height - self.contentRect(forFrameRect: frame).height
+    }
+    
+    func positionCenter() {
+        if let screenSize = screen?.visibleFrame.size {
+            self.setFrameOrigin(NSPoint(x: (screenSize.width - frame.size.width) / 2.0, y: (screenSize.height - frame.size.height) / 2.0 - titlebarHeight))
+        }
     }
 }
 

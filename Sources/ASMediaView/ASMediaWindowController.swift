@@ -13,7 +13,6 @@ class ASMediaWindowController: NSWindowController {
         aWindow.minSize = windowMinSize
         aWindow.maxSize = windowMaxSize
         super.init(window: aWindow)
-        self.window?.center()
         self.window?.setFrameAutosaveName(item.id.uuidString)
     }
 
