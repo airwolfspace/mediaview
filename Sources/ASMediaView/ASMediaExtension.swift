@@ -8,7 +8,7 @@ extension NSWindow {
     
     func positionCenter() {
         if let screenSize = screen?.visibleFrame.size {
-            self.setFrameOrigin(NSPoint(x: (screenSize.width - frame.size.width) / 2.0, y: (screenSize.height - frame.size.height) / 2.0 - titlebarHeight))
+            self.setFrameOrigin(NSPoint(x: (screenSize.width - frame.size.width) / 2.0, y: (screenSize.height - frame.size.height) / 2.0))
         }
     }
 }
