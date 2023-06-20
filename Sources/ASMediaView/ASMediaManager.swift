@@ -41,13 +41,6 @@ public class ASMediaManager: NSObject {
         })
     }
     
-    // MARK: - internal
-    func centerWindowPosition(byID id: UUID) {
-        if let controller = windowControllers.first(where: { $0.windowID() == id }), let window = controller.window {
-            window.positionCenter()
-        }
-    }
-
     // MARK: - private
 
     private func addWindowController(withPhotoURLs photoURLs: [URL]?, videoURLs: [URL]?, audioURLs: [URL]?, title: String, andID id: UUID) {

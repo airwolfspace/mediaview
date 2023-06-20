@@ -26,6 +26,11 @@ class ASMediaWindowController: NSWindowController {
     override func windowDidLoad() {
         super.windowDidLoad()
     }
+
+    override func showWindow(_ sender: Any?) {
+        super.showWindow(sender)
+        self.window?.positionCenter()
+    }
     
     func windowID() -> UUID {
         return mediaItem.id

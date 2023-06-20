@@ -25,9 +25,6 @@ struct ASMediaView: View {
         }
         .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
         .edgesIgnoringSafeArea(.top)
-        .task {
-            ASMediaManager.shared.centerWindowPosition(byID: self.item.id)
-        }
     }
     
     @ViewBuilder
