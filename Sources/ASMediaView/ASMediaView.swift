@@ -67,7 +67,7 @@ struct ASMediaView: View {
                 }
                 .opacity(0)
                 .keyboardShortcut(.leftArrow, modifiers: [])
-                controlBackgroundView()
+                ASMediaViewControlBackgroundView()
                 Image(systemName: "arrow.left")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -87,7 +87,7 @@ struct ASMediaView: View {
                 }
                 .opacity(0)
                 .keyboardShortcut(.rightArrow, modifiers: [])
-                controlBackgroundView()
+                ASMediaViewControlBackgroundView()
                 Image(systemName: "arrow.right")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
@@ -111,14 +111,7 @@ struct ASMediaView: View {
         }
         .padding()
     }
-    
-    @ViewBuilder
-    private func controlBackgroundView() -> some View {
-        Circle()
-            .fill(Color.secondary.opacity(0.75))
-            .frame(width: 44, height: 44)
-    }
-    
+
     private func updateIndex(byValue value: Int, forURLs urls: [URL]) {
         let currentIndex = currentPhotoIndex
         let updatedCurrentIndex = currentIndex + value
