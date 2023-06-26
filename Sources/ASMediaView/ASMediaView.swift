@@ -18,7 +18,7 @@ struct ASMediaView: View {
             if let urls = item.photoURLs, urls.count > 0 {
                 photosView(urls: urls)
             } else {
-                noContentView()
+                ASMediaViewPlaceholderView()
             }
         }
         .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
@@ -28,27 +28,24 @@ struct ASMediaView: View {
     @ViewBuilder
     private func photosView(urls: [URL]) -> some View {
         if let image = NSImage(contentsOf: urls[currentPhotoIndex]) {
-            ZStack {
+            if urls.count > 1 {
+                ZStack {
+                    VStack {
+                        Image(nsImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    }
+                    ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentPhotoIndex: $currentPhotoIndex)
+                }
+            } else {
                 VStack {
                     Image(nsImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                 }
-                if urls.count > 1 {
-                    ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentPhotoIndex: $currentPhotoIndex)
-                }
             }
         } else {
-            noContentView()
+            ASMediaViewPlaceholderView()
         }
-    }
-
-    @ViewBuilder
-    private func noContentView() -> some View {
-        VStack {
-            Text("No content.")
-                .foregroundColor(.secondary)
-        }
-        .padding()
     }
 }
