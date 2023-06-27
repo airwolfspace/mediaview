@@ -20,13 +20,7 @@ struct ASMediaViewControlView: View {
                 }
                 .opacity(0)
                 .keyboardShortcut(.leftArrow, modifiers: [])
-                ASMediaViewControlBackgroundView()
-                Image(systemName: "arrow.left")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundColor(.white)
-                    .frame(width: 22, height: 22, alignment: .center)
+                ASMediaViewControlBackgroundView(withDirection: .previous)
             }
             .onTapGesture {
                 updateIndex(byValue: -1, forURLs: urls)
@@ -40,13 +34,7 @@ struct ASMediaViewControlView: View {
                 }
                 .opacity(0)
                 .keyboardShortcut(.rightArrow, modifiers: [])
-                ASMediaViewControlBackgroundView()
-                Image(systemName: "arrow.right")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .symbolRenderingMode(.monochrome)
-                    .foregroundColor(.white)
-                    .frame(width: 22, height: 22, alignment: .center)
+                ASMediaViewControlBackgroundView(withDirection: .next)
             }
             .onTapGesture {
                 updateIndex(byValue: 1, forURLs: urls)
