@@ -49,8 +49,8 @@ struct ContentView: View {
 
 
 ## Work in progress
-- [ ] Documentation
+- [x] Documentation
 - [x] Photo support
 - [ ] Video support
 - [ ] Audio support
-- [ ] Tests including UI Tests
+- [x] Tests including UI Tests
