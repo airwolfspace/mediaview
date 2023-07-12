@@ -20,8 +20,6 @@ extension NSImage {
         if data.count > 3 {
             let bytes = [UInt8](data)
             let result = (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
-            debugPrint("GIF result: \(result), image: \(self)")
-            return true
             return result
         }
         return false

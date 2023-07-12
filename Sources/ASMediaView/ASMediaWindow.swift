@@ -29,7 +29,7 @@ class ASMediaWindow: NSWindow {
             DispatchQueue.main.async {
                 self.setFrame(updatedFrame, display: true, animate: true)
             }
-        }        
+        }
     }
     
     deinit {
