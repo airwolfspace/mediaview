@@ -1,19 +1,20 @@
 import SwiftUI
 
 
-enum ASMediaViewControlDirection {
+enum ASMediaViewControlType {
     case previous
     case next
+    case close
 }
 
 
 struct ASMediaViewControlBackgroundView: View {
     @State private var isOnHover: Bool
     
-    var direction: ASMediaViewControlDirection
+    var controlType: ASMediaViewControlType
     
-    init(withDirection direction: ASMediaViewControlDirection) {
-        self.direction = direction
+    init(withControlType type: ASMediaViewControlType) {
+        self.controlType = type
         _isOnHover = State(initialValue: false)
     }
     
@@ -23,7 +24,7 @@ struct ASMediaViewControlBackgroundView: View {
                 .fill(.ultraThinMaterial.opacity(isOnHover ? 0.8 : 0.7))
                 .frame(width: 44, height: 44)
                 .shadow(color: isOnHover ? Color.secondary.opacity(0.25) : Color.clear, radius: isOnHover ? 1 : 0, x: 0, y: 0)
-            Image(systemName: direction == .next ? "arrow.right" : "arrow.left")
+            Image(systemName: controlImageName())
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .symbolRenderingMode(.monochrome)
@@ -32,6 +33,17 @@ struct ASMediaViewControlBackgroundView: View {
         }
         .onHover { hovering in
             self.isOnHover = hovering
+        }
+    }
+    
+    private func controlImageName() -> String {
+        switch controlType {
+        case .previous:
+            return "arrow.right"
+        case .next:
+            return "arrow.left"
+        case .close:
+            return "xmark"
         }
     }
 }

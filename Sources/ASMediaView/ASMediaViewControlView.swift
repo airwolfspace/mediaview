@@ -20,7 +20,7 @@ struct ASMediaViewControlView: View {
                 }
                 .opacity(0)
                 .keyboardShortcut(.leftArrow, modifiers: [])
-                ASMediaViewControlBackgroundView(withDirection: .previous)
+                ASMediaViewControlBackgroundView(withControlType: .previous)
             }
             .onTapGesture {
                 updateIndex(byValue: -1, forURLs: urls)
@@ -34,7 +34,7 @@ struct ASMediaViewControlView: View {
                 }
                 .opacity(0)
                 .keyboardShortcut(.rightArrow, modifiers: [])
-                ASMediaViewControlBackgroundView(withDirection: .next)
+                ASMediaViewControlBackgroundView(withControlType: .next)
             }
             .onTapGesture {
                 updateIndex(byValue: 1, forURLs: urls)
