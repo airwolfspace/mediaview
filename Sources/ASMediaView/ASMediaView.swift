@@ -27,25 +27,28 @@ struct ASMediaView: View {
     
     @ViewBuilder
     private func photosView(urls: [URL]) -> some View {
-        if let image = NSImage(contentsOf: urls[currentPhotoIndex]) {
-            if urls.count > 1 {
-                ZStack {
+        ZStack {
+            if let image = NSImage(contentsOf: urls[currentPhotoIndex]) {
+                if urls.count > 1 {
                     VStack {
                         Image(nsImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                     }
                     ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentPhotoIndex: $currentPhotoIndex)
+                    ASMediaViewControlCloseView(id: item.id)
+                } else {
+                    VStack {
+                        Image(nsImage: image)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                    }
+                    ASMediaViewControlCloseView(id: item.id)
                 }
             } else {
-                VStack {
-                    Image(nsImage: image)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                }
+                ASMediaViewPlaceholderView()
+                ASMediaViewControlCloseView(id: item.id)
             }
-        } else {
-            ASMediaViewPlaceholderView()
         }
     }
 }

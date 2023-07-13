@@ -30,6 +30,9 @@ class ASMediaWindow: NSWindow {
                 self.setFrame(updatedFrame, display: true, animate: true)
             }
         }
+        NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: .main) { [weak self] _ in
+            self?.orderOut(nil)
+        }
     }
     
     deinit {

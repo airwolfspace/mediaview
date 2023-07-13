@@ -37,4 +37,7 @@ extension Notification.Name {
     static func viewSizeChanged(byID id: UUID) -> Notification.Name {
         return Notification.Name("ASMediaViewSizeChangedNotification" + "-" + id.uuidString)
     }
+    static func closed(byID id: UUID) -> Notification.Name {
+        return Notification.Name("ASMediaViewClosedNotification" + "-" + id.uuidString)
+    }
 }
