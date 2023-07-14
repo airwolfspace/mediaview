@@ -33,8 +33,8 @@ class ASMediaViewController: NSViewController {
         self.view.layer?.backgroundColor = .clear
     }
     
-    override func viewDidLayout() {
-        super.viewDidLayout()
+    override func viewWillLayout() {
+        super.viewWillLayout()
         if let btn = self.view.window?.standardWindowButton(.miniaturizeButton) {
             btn.removeFromSuperview()
         }
@@ -44,6 +44,10 @@ class ASMediaViewController: NSViewController {
         if let btn = self.view.window?.standardWindowButton(.closeButton) {
             btn.removeFromSuperview()
         }
+    }
+    
+    override func viewDidLayout() {
+        super.viewDidLayout()
     }
 
     // MARK: -
