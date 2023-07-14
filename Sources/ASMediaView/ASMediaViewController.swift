@@ -49,6 +49,19 @@ class ASMediaViewController: NSViewController {
     override func viewDidLayout() {
         super.viewDidLayout()
     }
+    
+    override func viewWillAppear() {
+        super.viewWillAppear()
+        if let btn = self.view.window?.standardWindowButton(.miniaturizeButton) {
+            btn.removeFromSuperview()
+        }
+        if let btn = self.view.window?.standardWindowButton(.zoomButton) {
+            btn.removeFromSuperview()
+        }
+        if let btn = self.view.window?.standardWindowButton(.closeButton) {
+            btn.removeFromSuperview()
+        }
+    }
 
     // MARK: -
 
