@@ -29,7 +29,7 @@ struct ASMediaViewControlBackgroundView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .symbolRenderingMode(.monochrome)
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .frame(width: isCloseType ? 11 : 22, height: isCloseType ? 11 : 22, alignment: .center)
         }
         .onHover { hovering in
