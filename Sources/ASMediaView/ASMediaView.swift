@@ -6,6 +6,7 @@ struct ASMediaView: View {
     
     @State private var currentMinSize: NSSize
     @State private var currentPhotoIndex: Int
+    @State private var currentImage: NSImage?
     
     init(withItem item: ASMediaItem) {
         self.item = item
@@ -23,6 +24,9 @@ struct ASMediaView: View {
         }
         .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
         .edgesIgnoringSafeArea(.top)
+        .onDisappear {
+            currentImage = nil
+        }
     }
     
     @ViewBuilder
@@ -32,10 +36,14 @@ struct ASMediaView: View {
                 if image.isGIFImage() {
                     ASMediaViewGIFAnimationView(image: image)
                 } else {
-                    VStack {
-                        Image(nsImage: image)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
+                    if let currentImage {
+                        VStack {
+                            Image(nsImage: currentImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                        }
+                    } else {
+                        ASMediaViewPlaceholderView()
                     }
                 }
                 if urls.count > 1 {
@@ -45,6 +53,18 @@ struct ASMediaView: View {
             } else {
                 ASMediaViewPlaceholderView()
                 ASMediaViewControlCloseView(id: item.id)
+            }
+        }
+        .onChange(of: currentPhotoIndex) { newValue in
+            if let image = NSImage(contentsOfFile: urls[newValue].path) {
+                currentImage = image
+            } else {
+                currentImage = nil
+            }
+        }
+        .task {
+            if let image = NSImage(contentsOfFile: urls[currentPhotoIndex].path) {
+                currentImage = image
             }
         }
     }

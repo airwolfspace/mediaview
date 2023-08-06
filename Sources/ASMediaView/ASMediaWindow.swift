@@ -2,7 +2,10 @@ import Cocoa
 
 
 class ASMediaWindow: NSWindow {
+    var mediaItemID: UUID
+    
     init(withMediaItem item: ASMediaItem, contentRect: NSRect) {
+        self.mediaItemID = item.id
         super.init(contentRect: contentRect, styleMask: [.miniaturizable, .closable, .resizable, .titled, .fullSizeContentView], backing: .buffered, defer: true)
         self.title = item.title
         self.titleVisibility = .hidden
@@ -32,6 +35,7 @@ class ASMediaWindow: NSWindow {
         }
         NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: .main) { [weak self] _ in
             self?.orderOut(nil)
+            ASMediaManager.shared.deactivateView(byID: item.id)
         }
     }
     
@@ -46,6 +50,7 @@ extension ASMediaWindow: NSWindowDelegate {
     }
 
     func windowShouldClose(_ sender: NSWindow) -> Bool {
+        ASMediaManager.shared.deactivateView(byID: self.mediaItemID)
         return true
     }
 }
