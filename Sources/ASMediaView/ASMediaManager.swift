@@ -41,6 +41,10 @@ public class ASMediaManager: NSObject {
         })
     }
     
+    public func imageIsGIF(image: NSImage) -> Bool {
+        return image.isGIFImage()
+    }
+
     // MARK: - private
 
     private func addWindowController(withPhotoURLs photoURLs: [URL]?, videoURLs: [URL]?, audioURLs: [URL]?, title: String, andID id: UUID) {
