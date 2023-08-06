@@ -24,9 +24,6 @@ struct ASMediaView: View {
         }
         .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
         .edgesIgnoringSafeArea(.top)
-        .onDisappear {
-            currentImage = nil
-        }
     }
     
     @ViewBuilder
@@ -36,15 +33,7 @@ struct ASMediaView: View {
                 if image.isGIFImage() {
                     ASMediaViewGIFAnimationView(image: image)
                 } else {
-                    if let currentImage {
-                        VStack {
-                            Image(nsImage: currentImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                        }
-                    } else {
-                        ASMediaViewPlaceholderView()
-                    }
+                    staticImageView()
                 }
                 if urls.count > 1 {
                     ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentPhotoIndex: $currentPhotoIndex)
@@ -66,6 +55,19 @@ struct ASMediaView: View {
             if let image = NSImage(contentsOfFile: urls[currentPhotoIndex].path) {
                 currentImage = image
             }
+        }
+    }
+    
+    @ViewBuilder
+    private func staticImageView() -> some View {
+        if let currentImage {
+            VStack {
+                Image(nsImage: currentImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+            }
+        } else {
+            ASMediaViewPlaceholderView(placeholder: "Loading...")
         }
     }
 }

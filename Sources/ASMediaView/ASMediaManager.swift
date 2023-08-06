@@ -58,9 +58,7 @@ public class ASMediaManager: NSObject {
     private func destroyWindowController(byID id: UUID) {
         windowControllers = windowControllers.filter({ controller in
             if controller.windowID() == id {
-                controller.contentViewController = nil
-                controller.window?.close()
-                controller.window = nil
+                controller.close()
                 return false
             }
             return true

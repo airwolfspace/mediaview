@@ -2,7 +2,7 @@ import Cocoa
 
 
 class ASMediaWindowController: NSWindowController {
-    let mediaItem: ASMediaItem
+    var mediaItem: ASMediaItem
 
     init(withMediaItem item: ASMediaItem) {
         self.mediaItem = item
@@ -21,6 +21,9 @@ class ASMediaWindowController: NSWindowController {
     }
 
     deinit {
+        self.window?.contentViewController = nil
+        self.window?.windowController = nil
+        self.window = nil
     }
 
     override func windowDidLoad() {

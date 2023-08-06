@@ -14,27 +14,27 @@ class ASMediaWindow: NSWindow {
         self.collectionBehavior = .fullScreenNone
         self.contentViewController = ASMediaViewController(withMediaItem: item)
         self.delegate = self
-        NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { n in
+        NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { [weak self] n in
             guard let value = n.object as? NSValue else { return }
-            let deltaWidth = self.frame.size.width - value.sizeValue.width
-            let deltaHeight = self.frame.size.height - value.sizeValue.height
+            let selfFrame = self?.frame ?? .zero
+            let deltaWidth = selfFrame.size.width - value.sizeValue.width
+            let deltaHeight = selfFrame.size.height - value.sizeValue.height
             let updatedOrigin: NSPoint
             if deltaWidth > 0 {
                 if deltaHeight > 0 {
-                    updatedOrigin = NSPoint(x: self.frame.origin.x, y: self.frame.origin.y + deltaHeight)
+                    updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y + deltaHeight)
                 } else {
-                    updatedOrigin = NSPoint(x: self.frame.origin.x, y: self.frame.origin.y - deltaHeight)
+                    updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y - deltaHeight)
                 }
             } else {
-                updatedOrigin = NSPoint(x: self.frame.origin.x, y: self.frame.origin.y + deltaHeight)
+                updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y + deltaHeight)
             }
             let updatedFrame = NSRect(origin: updatedOrigin, size: value.sizeValue)
             DispatchQueue.main.async {
-                self.setFrame(updatedFrame, display: true, animate: true)
+                self?.setFrame(updatedFrame, display: true, animate: true)
             }
         }
-        NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: .main) { [weak self] _ in
-            self?.orderOut(nil)
+        NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: .main) { _ in
             ASMediaManager.shared.deactivateView(byID: item.id)
         }
     }
@@ -46,9 +46,6 @@ class ASMediaWindow: NSWindow {
 
 
 extension ASMediaWindow: NSWindowDelegate {
-    func windowWillClose(_ notification: Notification) {
-    }
-
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         ASMediaManager.shared.deactivateView(byID: self.mediaItemID)
         return true

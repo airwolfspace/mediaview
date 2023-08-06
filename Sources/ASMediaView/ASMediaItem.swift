@@ -10,7 +10,7 @@ struct ASMediaItem: Identifiable {
 
     func bestWindowMinSize(forTargetSize targetSize: NSSize = .zero) -> NSSize {
         let windowMinSize = NSSize(width: 480, height: 320)
-        if let firstPhotoURL = photoURLs?.first, let firstPhoto = NSImage(contentsOf: firstPhotoURL) {
+        if let firstPhotoURL = photoURLs?.first, let firstPhoto = NSImage(contentsOfFile: firstPhotoURL.path) {
             let normalWindow = NSWindow(contentRect: .init(origin: .zero, size: windowMinSize), styleMask: [.titled], backing: .buffered, defer: true)
             let titlebarHeight = normalWindow.titlebarHeight
             if CGSizeEqualToSize(targetSize, .zero) {

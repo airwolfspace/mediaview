@@ -3,7 +3,7 @@ import SwiftUI
 
 
 class ASMediaViewController: NSViewController {
-    let mediaItem: ASMediaItem
+    var mediaItem: ASMediaItem
 
     init(withMediaItem item: ASMediaItem) {
         self.mediaItem = item
@@ -12,6 +12,9 @@ class ASMediaViewController: NSViewController {
     
     required init?(coder: NSCoder) {
         fatalError()
+    }
+    
+    deinit {
     }
 
     override func viewDidLoad() {
