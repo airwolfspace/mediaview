@@ -34,9 +34,9 @@ public class ASMediaManager: NSObject {
     @MainActor
     public func deactivateAll() {
         windowControllers = windowControllers.filter({ controller in
+            controller.contentViewController = nil
             controller.window?.close()
             controller.window = nil
-            controller.contentViewController = nil
             return false
         })
     }
@@ -54,9 +54,9 @@ public class ASMediaManager: NSObject {
     private func destroyWindowController(byID id: UUID) {
         windowControllers = windowControllers.filter({ controller in
             if controller.windowID() == id {
+                controller.contentViewController = nil
                 controller.window?.close()
                 controller.window = nil
-                controller.contentViewController = nil
                 return false
             }
             return true

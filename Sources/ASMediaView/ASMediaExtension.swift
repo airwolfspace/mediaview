@@ -1,4 +1,5 @@
 import Cocoa
+import ImageIO
 
 
 extension NSWindow {
@@ -15,12 +16,13 @@ extension NSWindow {
 
 
 extension NSImage {
-    var isGIF: Bool {
-        let data = self.tiffRepresentation ?? Data()
-        if data.count > 3 {
-            let bytes = [UInt8](data)
-            let result = (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46)
-            return result
+    func isGIFImage() -> Bool {
+        let reps = self.representations
+        for rep in reps {
+            if let bitmapRep = rep as? NSBitmapImageRep {
+                let numFrame = bitmapRep.value(forProperty: NSBitmapImageRep.PropertyKey.frameCount) as? Int ?? 0
+                return numFrame > 1
+            }
         }
         return false
     }
