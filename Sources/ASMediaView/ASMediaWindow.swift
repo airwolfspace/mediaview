@@ -8,6 +8,9 @@ class ASMediaWindow: NSWindow {
         self.mediaItemID = item.id
         super.init(contentRect: contentRect, styleMask: [.miniaturizable, .closable, .resizable, .titled, .fullSizeContentView], backing: .buffered, defer: true)
         self.title = item.title
+        if item.title == "" {
+            self.title = item.id.uuidString
+        }
         self.titleVisibility = .hidden
         self.titlebarAppearsTransparent = true
         self.isMovableByWindowBackground = true
