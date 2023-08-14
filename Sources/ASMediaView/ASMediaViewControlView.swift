@@ -8,7 +8,12 @@ struct ASMediaViewControlView: View {
     @Binding var currentMinSize: NSSize
     @Binding var currentPhotoIndex: Int
 
-    @State private var isHover: Bool = false
+    @State private var isHover: Bool = false {
+        didSet {
+            opacity = isHover ? 1.0 : 0.0
+        }
+    }
+    @State private var opacity: Double = 0
 
     var body: some View {
         HStack {
@@ -42,7 +47,7 @@ struct ASMediaViewControlView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16)
-        .opacity(isHover ? 1.0 : 0.0)
+        .opacity(opacity)
         .onReceive(NotificationCenter.default.publisher(for: .mouseEntered(byID: id)), perform: { _ in
             Task { @MainActor in
                 guard self.isHover == false else { return }
@@ -55,6 +60,12 @@ struct ASMediaViewControlView: View {
                 self.isHover = false
             }
         })
+        .onAppear {
+            opacity = 1.0
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                self.hideControlView()
+            }
+        }
     }
     
     private func updateIndex(byValue value: Int, forURLs urls: [URL]) {
@@ -70,6 +81,13 @@ struct ASMediaViewControlView: View {
             }
             let value = NSValue(size: currentMinSize)
             NotificationCenter.default.post(name: .viewSizeChanged(byID: self.id), object: value)
+        }
+    }
+    
+    private func hideControlView() {
+        guard !isHover else { return }
+        withAnimation {
+            self.opacity = 0.0
         }
     }
 }

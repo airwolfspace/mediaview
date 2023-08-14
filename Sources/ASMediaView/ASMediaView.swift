@@ -38,11 +38,10 @@ struct ASMediaView: View {
                 if urls.count > 1 {
                     ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentPhotoIndex: $currentPhotoIndex)
                 }
-                ASMediaViewControlCloseView(id: item.id)
             } else {
                 ASMediaViewPlaceholderView()
-                ASMediaViewControlCloseView(id: item.id)
             }
+            ASMediaViewControlCloseView(id: item.id)
         }
         .onChange(of: currentPhotoIndex) { newValue in
             if let image = NSImage(contentsOfFile: urls[newValue].path) {
