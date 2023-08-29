@@ -32,6 +32,7 @@ struct ASMediaView: View {
             if let image = NSImage(contentsOfFile: urls[currentPhotoIndex].path) {
                 if image.isGIFImage() {
                     ASMediaViewGIFAnimationView(image: image)
+                        .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
                 } else {
                     ASMediaViewStaticView(image: currentImage)
                 }
