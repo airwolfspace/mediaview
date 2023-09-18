@@ -8,7 +8,6 @@ struct ASMediaView: View {
     @State private var currentMinSize: NSSize
     @State private var currentIndex: Int
     @State private var currentImage: NSImage?
-    @State private var currentVideo: AVPlayerItem?
     
     init(withItem item: ASMediaItem) {
         self.item = item
@@ -74,23 +73,46 @@ struct ASMediaView: View {
     @ViewBuilder
     private func videosView(urls: [URL]) -> some View {
         ZStack {
-            if let currentVideo {
-                let player = AVPlayer(playerItem: currentVideo)
-                VideoPlayer(player: player)
-                    .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
-                if urls.count > 1 {
-                    ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentPhotoIndex: $currentIndex)
-                }
-            } else {
-                ASMediaViewPlaceholderView()
+            VideoPlayer(player: AVPlayer(url: urls[currentIndex]))
+                .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
+            if urls.count > 1 {
+                ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentPhotoIndex: $currentIndex)
             }
             ASMediaViewControlCloseView(id: item.id)
         }
         .onChange(of: currentIndex) { newValue in
-            currentVideo = AVPlayerItem(url: urls[newValue])
+            Task {
+                do {
+                    try await calculateBestVideoPlayerSize(forURL: urls[newValue])
+                } catch {
+                    debugPrint("failed to calculate best video size: \(error)")
+                }
+            }
         }
         .task {
-            currentVideo = AVPlayerItem(url: urls[currentIndex])
+            do {
+                try await calculateBestVideoPlayerSize(forURL: urls[currentIndex])
+            } catch {
+                debugPrint("failed to calculate best video size: \(error)")
+            }
+        }
+    }
+    
+    private func calculateBestVideoPlayerSize(forURL url: URL) async throws {
+        guard let track = try await AVURLAsset(url: url).loadTracks(withMediaType: .video).first else { return }
+        let size = try await track.load(.naturalSize).applying(track.load(.preferredTransform))
+        let ratio = NSScreen.main?.backingScaleFactor ?? 1.0
+        let videoSize = NSSize(width: size.width / ratio, height: size.height / ratio)
+        let videoRatio = size.width / size.height
+        guard let windowMaxSize = NSScreen.main?.frame.size else { return }
+        let bestSize: NSSize
+        if videoSize.width > windowMaxSize.width / 2.0 || videoSize.height > windowMaxSize.height / 2.0 {
+            bestSize = NSSize(width: windowMaxSize.width / 2.0, height: windowMaxSize.width / 2.0 / videoRatio)
+        } else {
+            bestSize = videoSize
+        }
+        Task { @MainActor in
+            self.currentMinSize = bestSize
         }
     }
 }

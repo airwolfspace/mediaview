@@ -36,9 +36,8 @@ struct ASMediaItem: Identifiable {
             } else {
                 return NSSize(width: targetSize.width, height: targetSize.height - titlebarHeight)
             }
-        } else if let firstVideoURL = videoURLs?.first {
-            let item = AVPlayerItem(url: firstVideoURL)
-            debugPrint("current presentation size: \(item.presentationSize)")
+        } else if let _ = videoURLs?.first {
+            // calculate inside media view on task.
         }
         return windowMinSize
     }
