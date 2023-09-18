@@ -17,7 +17,11 @@ public class ASMediaManager: NSObject {
     
     @MainActor
     public func activateVideoView(withVideos videoURLs: [URL], title: String, andID id: UUID) {
-        // MARK: TODO: Add video view
+        if let controller = windowControllers.first(where: { $0.windowID() == id }) {
+            controller.window?.makeKeyAndOrderFront(nil)
+        } else {
+            addWindowController(withPhotoURLs: nil, videoURLs: videoURLs, audioURLs: nil, title: title, andID: id)
+        }
     }
     
     @MainActor

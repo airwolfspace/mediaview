@@ -1,4 +1,5 @@
 import SwiftUI
+import AVKit
 
 
 struct ASMediaItem: Identifiable {
@@ -10,9 +11,9 @@ struct ASMediaItem: Identifiable {
 
     func bestWindowMinSize(forTargetSize targetSize: NSSize = .zero) -> NSSize {
         let windowMinSize = NSSize(width: 480, height: 320)
+        let normalWindow = NSWindow(contentRect: .init(origin: .zero, size: windowMinSize), styleMask: [.titled], backing: .buffered, defer: true)
+        let titlebarHeight = normalWindow.titlebarHeight
         if let firstPhotoURL = photoURLs?.first, let firstPhoto = NSImage(contentsOfFile: firstPhotoURL.path) {
-            let normalWindow = NSWindow(contentRect: .init(origin: .zero, size: windowMinSize), styleMask: [.titled], backing: .buffered, defer: true)
-            let titlebarHeight = normalWindow.titlebarHeight
             if CGSizeEqualToSize(targetSize, .zero) {
                 let screenSize = NSScreen.main?.frame.size ?? windowMinSize
                 let photoRatio = firstPhoto.size.width / firstPhoto.size.height
@@ -35,6 +36,9 @@ struct ASMediaItem: Identifiable {
             } else {
                 return NSSize(width: targetSize.width, height: targetSize.height - titlebarHeight)
             }
+        } else if let firstVideoURL = videoURLs?.first {
+            let item = AVPlayerItem(url: firstVideoURL)
+            debugPrint("current presentation size: \(item.presentationSize)")
         }
         return windowMinSize
     }
