@@ -6,7 +6,7 @@ struct ASMediaViewControlView: View {
     var urls: [URL]
     
     @Binding var currentMinSize: NSSize
-    @Binding var currentPhotoIndex: Int
+    @Binding var currentIndex: Int
 
     @State private var isHover: Bool = false {
         didSet {
@@ -69,15 +69,15 @@ struct ASMediaViewControlView: View {
     }
     
     private func updateIndex(byValue value: Int, forURLs urls: [URL]) {
-        let currentIndex = currentPhotoIndex
-        let updatedCurrentIndex = currentIndex + value
+        let index = currentIndex
+        let updatedIndex = index + value
         Task { @MainActor in
-            if updatedCurrentIndex > urls.count - 1 {
-                currentPhotoIndex = 0
-            } else if updatedCurrentIndex < 0 {
-                currentPhotoIndex = urls.count - 1
+            if updatedIndex > urls.count - 1 {
+                currentIndex = 0
+            } else if updatedIndex < 0 {
+                currentIndex = urls.count - 1
             } else {
-                currentPhotoIndex = updatedCurrentIndex
+                currentIndex = updatedIndex
             }
             let value = NSValue(size: currentMinSize)
             NotificationCenter.default.post(name: .viewSizeChanged(byID: self.id), object: value)

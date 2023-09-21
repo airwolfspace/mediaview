@@ -30,7 +30,11 @@ class ASMediaWindow: NSWindow {
                     updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y - deltaHeight)
                 }
             } else {
-                updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y + deltaHeight)
+                if deltaHeight > 0 {
+                    updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y + deltaHeight)
+                } else {
+                    updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y - deltaHeight)
+                }
             }
             let updatedFrame = NSRect(origin: updatedOrigin, size: value.sizeValue)
             DispatchQueue.main.async {
