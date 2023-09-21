@@ -102,14 +102,22 @@ struct ASMediaView: View {
         guard let track = try await AVURLAsset(url: url).loadTracks(withMediaType: .video).first else { return }
         let size = try await track.load(.naturalSize).applying(track.load(.preferredTransform))
         let ratio = NSScreen.main?.backingScaleFactor ?? 1.0
-        let videoSize = NSSize(width: size.width / ratio, height: size.height / ratio)
-        let videoRatio = size.width / size.height
+        let videoSize = NSSize(width: abs(size.width / ratio), height: abs(size.height / ratio))
+        let videoRatio = abs(size.width / size.height)
         guard let windowMaxSize = NSScreen.main?.frame.size else { return }
         let bestSize: NSSize
-        if videoSize.width > windowMaxSize.width / 2.0 || videoSize.height > windowMaxSize.height / 2.0 {
-            bestSize = NSSize(width: windowMaxSize.width / 2.0, height: windowMaxSize.width / 2.0 / videoRatio)
+        if videoRatio > 1.0 {
+            if videoSize.width > windowMaxSize.width / 2.0 {
+                bestSize = NSSize(width: windowMaxSize.width / 2.0, height: windowMaxSize.width / 2.0 / videoRatio)
+            } else {
+                bestSize = videoSize
+            }
         } else {
-            bestSize = videoSize
+            if videoSize.height > windowMaxSize.height / 2.0 {
+                bestSize = NSSize(width: windowMaxSize.height / 2.0 * videoRatio, height: windowMaxSize.height / 2.0)
+            } else {
+                bestSize = videoSize
+            }
         }
         Task { @MainActor in
             self.currentMinSize = bestSize
