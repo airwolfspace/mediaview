@@ -110,7 +110,7 @@ struct ASMediaView: View {
         let videoSize = NSSize(width: abs(size.width / ratio), height: abs(size.height / ratio))
         let videoRatio = abs(size.width / size.height)
         guard let windowMaxSize = NSScreen.main?.frame.size else { return }
-        let normalWindow = await NSWindow(contentRect: .init(origin: .zero, size: .init(width: 100, height: 100)), styleMask: [.titled], backing: .buffered, defer: true)
+        let normalWindow = await NSWindow(contentRect: .init(origin: .zero, size: .init(width: 1, height: 1)), styleMask: [.titled], backing: .buffered, defer: true)
         let titlebarHeight = await normalWindow.titlebarHeight
         let bestSize: NSSize
         if videoRatio > 1.0 {
