@@ -15,6 +15,11 @@ extension NSWindow {
 }
 
 
+extension NSSize {
+    static let windowMinSize = NSSize(width: 180, height: 180)
+}
+
+
 extension NSImage {
     func isGIFImage() -> Bool {
         let reps = self.representations

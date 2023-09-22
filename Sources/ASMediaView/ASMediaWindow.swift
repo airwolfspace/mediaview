@@ -19,9 +19,16 @@ class ASMediaWindow: NSWindow {
         self.delegate = self
         NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { [weak self] n in
             guard let value = n.object as? NSValue else { return }
+            var finalSize = value.sizeValue
+            if finalSize.width < NSSize.windowMinSize.width {
+                finalSize.width = NSSize.windowMinSize.width
+            }
+            if finalSize.height < NSSize.windowMinSize.height {
+                finalSize.height = NSSize.windowMinSize.height
+            }
             let selfFrame = self?.frame ?? .zero
-            let deltaWidth = selfFrame.size.width - value.sizeValue.width
-            let deltaHeight = selfFrame.size.height - value.sizeValue.height
+            let deltaWidth = selfFrame.size.width - finalSize.width
+            let deltaHeight = selfFrame.size.height - finalSize.height
             let updatedOrigin: NSPoint
             if deltaWidth > 0 {
                 if deltaHeight > 0 {
@@ -36,7 +43,7 @@ class ASMediaWindow: NSWindow {
                     updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y - deltaHeight)
                 }
             }
-            let updatedFrame = NSRect(origin: updatedOrigin, size: value.sizeValue)
+            let updatedFrame = NSRect(origin: updatedOrigin, size: finalSize)
             DispatchQueue.main.async {
                 self?.setFrame(updatedFrame, display: true, animate: true)
             }

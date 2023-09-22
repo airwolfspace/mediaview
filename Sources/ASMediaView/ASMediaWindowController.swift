@@ -11,7 +11,7 @@ class ASMediaWindowController: NSWindowController {
         let windowRect = NSRect.zero
         let aWindow = ASMediaWindow(withMediaItem: item, contentRect: windowRect)
         aWindow.maxSize = windowMaxSize
-        aWindow.minSize = NSSize(width: 180, height: 180)
+        aWindow.minSize = .windowMinSize
         super.init(window: aWindow)
         self.window?.setFrameAutosaveName(item.id.uuidString)
     }
