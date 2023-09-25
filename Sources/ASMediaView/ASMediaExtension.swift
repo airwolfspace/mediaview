@@ -1,5 +1,6 @@
 import Cocoa
 import ImageIO
+import UniformTypeIdentifiers
 
 
 extension NSWindow {
@@ -17,6 +18,47 @@ extension NSWindow {
 
 extension NSSize {
     static let windowMinSize = NSSize(width: 180, height: 180)
+}
+
+
+extension URL {
+    func isSupportedPhoto() -> Bool {
+        let pathExtension = self.pathExtension
+        if let type = UTType(filenameExtension: pathExtension) {
+            return (
+                type.conforms(to: .image) ||
+                type.conforms(to: .rawImage)
+            )
+        }
+        return false
+    }
+    
+    func isSupportedVideo() -> Bool {
+        let pathExtension = self.pathExtension
+        if let type = UTType(filenameExtension: pathExtension) {
+            return (
+                type.conforms(to: .movie) ||
+                type.conforms(to: .mpeg4Movie) ||
+                type.conforms(to: .quickTimeMovie) ||
+                type.conforms(to: .video) ||
+                type.conforms(to: .mpeg2Video) ||
+                type.conforms(to: .appleProtectedMPEG4Video)
+            )
+        }
+        return false
+    }
+    
+    func isSupportedAudio() -> Bool {
+        let pathExtension = self.pathExtension
+        if let type = UTType(filenameExtension: pathExtension) {
+            return (
+                type.conforms(to: .audio) ||
+                type.conforms(to: .mpeg4Audio) ||
+                type.conforms(to: .appleProtectedMPEG4Audio)
+            )
+        }
+        return false
+    }
 }
 
 

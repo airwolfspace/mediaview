@@ -8,12 +8,11 @@ struct ASMediaViewPlaceholderView: View {
         VStack {
             if let placeholder {
                 Text(placeholder)
-                    .foregroundColor(.secondary)
             } else {
                 Text("No content.")
-                    .foregroundColor(.secondary)
             }
         }
+        .foregroundColor(.secondary)
         .padding()
     }
 }

@@ -30,7 +30,7 @@ struct ASMediaView: View {
     @ViewBuilder
     private func containerView() -> some View {
         ZStack {
-            Color.secondary
+            Color.secondary.opacity(0.25)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             if let urls = item.photoURLs {
                 photosView(urls: urls)
@@ -46,18 +46,19 @@ struct ASMediaView: View {
     @ViewBuilder
     private func photosView(urls: [URL]) -> some View {
         ZStack {
-            if let image = NSImage(contentsOfFile: urls[currentIndex].path) {
+            let targetURL = urls[currentIndex]
+            if targetURL.isSupportedPhoto(), let image = NSImage(contentsOfFile: targetURL.path) {
                 if image.isGIFImage() {
                     ASMediaViewGIFAnimationView(image: image)
                         .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
                 } else {
                     ASMediaViewStaticView(image: currentImage)
                 }
-                if urls.count > 1 {
-                    ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
-                }
             } else {
-                ASMediaViewPlaceholderView()
+                ASMediaViewUnsupportedView(fileURL: targetURL)
+            }
+            if urls.count > 1 {
+                ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
             }
             ASMediaViewControlCloseView(id: item.id)
         }
@@ -78,8 +79,13 @@ struct ASMediaView: View {
     @ViewBuilder
     private func videosView(urls: [URL]) -> some View {
         ZStack {
-            VideoPlayer(player: AVPlayer(url: urls[currentIndex]))
-                .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
+            let targetURL = urls[currentIndex]
+            if targetURL.isSupportedVideo() {
+                VideoPlayer(player: AVPlayer(url: urls[currentIndex]))
+                    .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
+            } else {
+                ASMediaViewUnsupportedView(fileURL: targetURL)
+            }
             if urls.count > 1 {
                 ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
             }
