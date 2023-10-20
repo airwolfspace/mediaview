@@ -11,8 +11,12 @@ struct ASMediaView: View {
     
     init(withItem item: ASMediaItem) {
         self.item = item
-        _currentMinSize = State(initialValue: item.bestWindowMinSize())
         _currentIndex = State(initialValue: 0)
+        if item.photoURLs != nil {
+            _currentMinSize = State(wrappedValue: self.item.calculatePhotoViewSize(forURLIndex: 0))
+        } else {
+            _currentMinSize = State(wrappedValue: item.windowMinSize)
+        }
     }
 
     var body: some View {
@@ -94,7 +98,10 @@ struct ASMediaView: View {
         .onChange(of: currentIndex) { newValue in
             Task {
                 do {
-                    try await calculateBestVideoPlayerSize(forURL: urls[newValue])
+                    let videoItemSize = try await self.item.calculateVideoPlayerSize(forURLIndex: self.currentIndex)
+                    await MainActor.run {
+                        self.currentMinSize = videoItemSize
+                    }
                 } catch {
                     debugPrint("failed to calculate best video size: \(error)")
                 }
@@ -102,41 +109,14 @@ struct ASMediaView: View {
         }
         .task {
             do {
-                try await calculateBestVideoPlayerSize(forURL: urls[currentIndex])
+                let videoItemSize = try await self.item.calculateVideoPlayerSize(forURLIndex: self.currentIndex)
+                await MainActor.run {
+                    self.currentMinSize = videoItemSize
+                }
             } catch {
                 debugPrint("failed to calculate best video size: \(error)")
             }
         }
     }
     
-    private func calculateBestVideoPlayerSize(forURL url: URL) async throws {
-        guard let track = try await AVURLAsset(url: url).loadTracks(withMediaType: .video).first else { return }
-        let size = try await track.load(.naturalSize).applying(track.load(.preferredTransform))
-        let ratio = NSScreen.main?.backingScaleFactor ?? 1.0
-        let videoSize = NSSize(width: abs(size.width / ratio), height: abs(size.height / ratio))
-        let videoRatio = abs(size.width / size.height)
-        guard let windowMaxSize = NSScreen.main?.frame.size else { return }
-        let normalWindow = await NSWindow(contentRect: .init(origin: .zero, size: .init(width: 1, height: 1)), styleMask: [.titled], backing: .buffered, defer: true)
-        let titlebarHeight = await normalWindow.titlebarHeight
-        let bestSize: NSSize
-        if videoRatio > 1.0 {
-            if videoSize.width > windowMaxSize.width / 2.0 {
-                bestSize = NSSize(width: windowMaxSize.width / 2.0, height: windowMaxSize.width / 2.0 / videoRatio)
-            } else {
-                bestSize = videoSize
-            }
-        } else {
-            if videoSize.height > windowMaxSize.height / 2.0 {
-                bestSize = NSSize(width: windowMaxSize.height / 2.0 * videoRatio, height: windowMaxSize.height / 2.0)
-            } else {
-                bestSize = videoSize
-            }
-        }
-        Task { @MainActor in
-            let updatedBestSize = NSSize(width: bestSize.width, height: bestSize.height - titlebarHeight)
-            self.currentMinSize = updatedBestSize
-            let value = NSValue(size: updatedBestSize)
-            NotificationCenter.default.post(name: .viewSizeChanged(byID: self.item.id), object: value)
-        }
-    }
 }

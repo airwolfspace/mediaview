@@ -19,6 +19,7 @@ class ASMediaWindow: NSWindow {
         self.delegate = self
         NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { [weak self] n in
             guard let value = n.object as? NSValue else { return }
+            debugPrint("about to resize window to size: \(value)")
             var finalSize = value.sizeValue
             if finalSize.width < NSSize.windowMinSize.width {
                 finalSize.width = NSSize.windowMinSize.width
