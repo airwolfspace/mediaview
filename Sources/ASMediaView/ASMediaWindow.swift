@@ -46,6 +46,7 @@ class ASMediaWindow: NSWindow {
             let updatedFrame = NSRect(origin: updatedOrigin, size: finalSize)
             DispatchQueue.main.async {
                 self?.setFrame(updatedFrame, display: true, animate: true)
+                self?.contentAspectRatio = value.sizeValue
             }
         }
         NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: .main) { _ in
