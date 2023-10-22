@@ -17,7 +17,7 @@ struct ASMediaViewControlBackgroundView: View {
         self.controlType = type
         _isOnHover = State(initialValue: false)
     }
-    
+
     var body: some View {
         let isCloseType = controlType == .close
         ZStack {

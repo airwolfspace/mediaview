@@ -79,8 +79,6 @@ struct ASMediaViewControlView: View {
             } else {
                 currentIndex = updatedIndex
             }
-            let value = NSValue(size: currentMinSize)
-            NotificationCenter.default.post(name: .viewSizeChanged(byID: self.id), object: value)
         }
     }
     

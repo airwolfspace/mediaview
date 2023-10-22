@@ -5,18 +5,19 @@ import AVKit
 struct ASMediaView: View {
     var item: ASMediaItem
     
-    @State private var currentMinSize: NSSize
+    @State private var currentMinSize: NSSize {
+        didSet {
+            let value = NSValue(size: currentMinSize)
+            NotificationCenter.default.post(name: .viewSizeChanged(byID: self.item.id), object: value)
+        }
+    }
     @State private var currentIndex: Int
     @State private var currentImage: NSImage?
     
     init(withItem item: ASMediaItem) {
         self.item = item
         _currentIndex = State(initialValue: 0)
-        if item.photoURLs != nil {
-            _currentMinSize = State(wrappedValue: self.item.calculatePhotoViewSize(forURLIndex: 0))
-        } else {
-            _currentMinSize = State(wrappedValue: item.windowMinSize)
-        }
+        _currentMinSize = State(wrappedValue: .windowMinSize)
     }
 
     var body: some View {
@@ -27,7 +28,7 @@ struct ASMediaView: View {
                 containerView()
             }
         }
-        .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
+        .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
         .edgesIgnoringSafeArea(.top)
     }
     
@@ -44,9 +45,9 @@ struct ASMediaView: View {
                 ASMediaViewPlaceholderView()
             }
         }
-        .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
+        .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
     }
-    
+
     @ViewBuilder
     private func photosView(urls: [URL]) -> some View {
         ZStack {
@@ -54,7 +55,7 @@ struct ASMediaView: View {
             if targetURL.isSupportedPhoto(), let image = NSImage(contentsOfFile: targetURL.path) {
                 if image.isGIFImage() {
                     ASMediaViewGIFAnimationView(image: image)
-                        .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
+                        .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
                 } else {
                     ASMediaViewStaticView(image: currentImage)
                 }
@@ -72,10 +73,20 @@ struct ASMediaView: View {
             } else {
                 currentImage = nil
             }
+            Task {
+                let size = self.item.calculatePhotoViewSize(forURLIndex: self.currentIndex)
+                await MainActor.run {
+                    self.currentMinSize = size
+                }
+            }
         }
         .task {
             if let image = NSImage(contentsOfFile: urls[currentIndex].path) {
                 currentImage = image
+            }
+            let size = self.item.calculatePhotoViewSize(forURLIndex: self.currentIndex)
+            await MainActor.run {
+                self.currentMinSize = size
             }
         }
     }
@@ -86,7 +97,7 @@ struct ASMediaView: View {
             let targetURL = urls[currentIndex]
             if targetURL.isSupportedVideo() {
                 VideoPlayer(player: AVPlayer(url: urls[currentIndex]))
-                    .frame(minWidth: currentMinSize.width, minHeight: currentMinSize.height)
+                    .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
             } else {
                 ASMediaViewUnsupportedView(fileURL: targetURL)
             }
@@ -118,5 +129,4 @@ struct ASMediaView: View {
             }
         }
     }
-    
 }

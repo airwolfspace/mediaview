@@ -28,25 +28,10 @@ class ASMediaWindow: NSWindow {
                 finalSize.height = NSSize.windowMinSize.height
             }
             let selfFrame = self?.frame ?? .zero
-            let deltaWidth = selfFrame.size.width - finalSize.width
-            let deltaHeight = selfFrame.size.height - finalSize.height
-            let updatedOrigin: NSPoint
-            if deltaWidth > 0 {
-                if deltaHeight > 0 {
-                    updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y + deltaHeight)
-                } else {
-                    updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y - deltaHeight)
-                }
-            } else {
-                if deltaHeight > 0 {
-                    updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y + deltaHeight)
-                } else {
-                    updatedOrigin = NSPoint(x: selfFrame.origin.x, y: selfFrame.origin.y - deltaHeight)
-                }
-            }
-            let updatedFrame = NSRect(origin: updatedOrigin, size: finalSize)
+            let updatedFrame = NSRect(origin: selfFrame.origin, size: finalSize)
             DispatchQueue.main.async {
                 self?.setFrame(updatedFrame, display: true, animate: true)
+                self?.contentAspectRatio = finalSize
             }
         }
         NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: .main) { _ in
