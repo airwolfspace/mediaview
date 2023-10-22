@@ -26,7 +26,11 @@ public class ASMediaManager: NSObject {
     
     @MainActor
     public func activateAudioView(withAudios audioURLs: [URL], title: String, andID id: UUID) {
-        // MARK: TODO: Add audio view
+        if let controller = windowControllers.first(where: { $0.windowID() == id }) {
+            controller.window?.makeKeyAndOrderFront(nil)
+        } else {
+            addWindowController(withPhotoURLs: nil, videoURLs: nil, audioURLs: audioURLs, title: title, andID: id)
+        }
     }
 
     @MainActor

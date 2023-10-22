@@ -70,5 +70,5 @@ struct ContentView: View {
 - [x] Documentation
 - [x] Photo support (GIF animation)
 - [x] Video support
-- [ ] Audio support
+- [x] Audio support
 - [x] Tests including UI Tests

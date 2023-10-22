@@ -13,7 +13,8 @@ struct ASMediaView: View {
     }
     @State private var currentIndex: Int
     @State private var currentImage: NSImage?
-    
+    @State private var currentPlayer: AVPlayer?
+
     init(withItem item: ASMediaItem) {
         self.item = item
         _currentIndex = State(initialValue: 0)
@@ -41,11 +42,47 @@ struct ASMediaView: View {
                 photosView(urls: urls)
             } else if let urls = item.videoURLs {
                 videosView(urls: urls)
+            } else if let urls = item.audioURLs {
+                audiosView(urls: urls)
             } else {
                 ASMediaViewPlaceholderView()
             }
         }
         .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
+    }
+    
+    @ViewBuilder
+    private func audiosView(urls: [URL]) -> some View {
+        ZStack {
+            let targetURL = urls[currentIndex]
+            if targetURL.isSupportedAudio() {
+                VideoPlayer(player: AVPlayer(url: urls[currentIndex]))
+                    .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
+            } else {
+                ASMediaViewUnsupportedView(fileURL: targetURL)
+            }
+            if urls.count > 1 {
+                ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
+            }
+            ASMediaViewControlCloseView(id: item.id)
+        }
+        .onChange(of: currentIndex) { newValue in
+            currentPlayer?.pause()
+            currentPlayer = AVPlayer(url: urls[newValue])
+            Task {
+                let size = self.item.calculateAudioViewSize(forURLIndex: self.currentIndex)
+                await MainActor.run {
+                    self.currentMinSize = size
+                }
+            }
+        }
+        .task {
+            currentPlayer = AVPlayer(url: urls[currentIndex])
+            let size = self.item.calculateAudioViewSize(forURLIndex: self.currentIndex)
+            await MainActor.run {
+                self.currentMinSize = size
+            }
+        }
     }
 
     @ViewBuilder
@@ -95,8 +132,8 @@ struct ASMediaView: View {
     private func videosView(urls: [URL]) -> some View {
         ZStack {
             let targetURL = urls[currentIndex]
-            if targetURL.isSupportedVideo() {
-                VideoPlayer(player: AVPlayer(url: urls[currentIndex]))
+            if targetURL.isSupportedVideo(), let currentPlayer {
+                VideoPlayer(player: currentPlayer)
                     .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
             } else {
                 ASMediaViewUnsupportedView(fileURL: targetURL)
@@ -107,6 +144,8 @@ struct ASMediaView: View {
             ASMediaViewControlCloseView(id: item.id)
         }
         .onChange(of: currentIndex) { newValue in
+            currentPlayer?.pause()
+            currentPlayer = AVPlayer(url: urls[newValue])
             Task {
                 do {
                     let videoItemSize = try await self.item.calculateVideoPlayerSize(forURLIndex: self.currentIndex)
@@ -119,6 +158,7 @@ struct ASMediaView: View {
             }
         }
         .task {
+            currentPlayer = AVPlayer(url: urls[currentIndex])
             do {
                 let videoItemSize = try await self.item.calculateVideoPlayerSize(forURLIndex: self.currentIndex)
                 await MainActor.run {

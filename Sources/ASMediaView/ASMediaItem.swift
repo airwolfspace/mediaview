@@ -17,6 +17,11 @@ struct ASMediaItem: Identifiable {
         self.audioURLs = audioURLs
     }
     
+    func calculateAudioViewSize(forURLIndex index: Int) -> NSSize {
+        debugPrint("calculating audio view size at index: \(index) ...")
+        return NSSize(width: 480, height: 320)
+    }
+    
     func calculatePhotoViewSize(forURLIndex index: Int) -> NSSize {
         debugPrint("calculating photo view size at index: \(index) ...")
         guard let urls = self.photoURLs, urls.count > 0, urls.count > index, let photo = NSImage(contentsOfFile: urls[index].path) else { return .windowMinSize }
