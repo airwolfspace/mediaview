@@ -5,6 +5,7 @@ class ASMediaImageView: NSImageView {
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
         self.animates = true
+        self.imageScaling = .scaleProportionallyUpOrDown
     }
     
     override var mouseDownCanMoveWindow: Bool {

@@ -17,6 +17,8 @@ class ASMediaWindow: NSWindow {
         self.collectionBehavior = .fullScreenNone
         self.contentViewController = ASMediaViewController(withMediaItem: item)
         self.delegate = self
+        self.contentAspectRatio = .windowMinSize
+        self.aspectRatio = .windowMinSize
         NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { [weak self] n in
             guard let value = n.object as? NSValue else { return }
             debugPrint("about to resize window to size: \(value)")
@@ -32,6 +34,7 @@ class ASMediaWindow: NSWindow {
             DispatchQueue.main.async {
                 self?.setFrame(updatedFrame, display: true, animate: true)
                 self?.contentAspectRatio = finalSize
+                self?.aspectRatio = finalSize
             }
         }
         NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: .main) { _ in

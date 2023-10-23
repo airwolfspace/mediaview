@@ -32,7 +32,7 @@ struct ASMediaView: View {
         .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
         .edgesIgnoringSafeArea(.top)
     }
-    
+
     @ViewBuilder
     private func containerView() -> some View {
         ZStack {
