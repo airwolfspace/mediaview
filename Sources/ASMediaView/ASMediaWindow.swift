@@ -17,11 +17,10 @@ class ASMediaWindow: NSWindow {
         self.collectionBehavior = .fullScreenNone
         self.contentViewController = ASMediaViewController(withMediaItem: item)
         self.delegate = self
-        self.contentAspectRatio = .windowMinSize
-        self.aspectRatio = .windowMinSize
+        self.contentAspectRatio = contentRect.size
+        self.aspectRatio = contentRect.size
         NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { [weak self] n in
             guard let value = n.object as? NSValue else { return }
-            debugPrint("about to resize window to size: \(value)")
             var finalSize = value.sizeValue
             if finalSize.width < NSSize.windowMinSize.width {
                 finalSize.width = NSSize.windowMinSize.width
@@ -32,13 +31,16 @@ class ASMediaWindow: NSWindow {
             let selfFrame = self?.frame ?? .zero
             let updatedFrame = NSRect(origin: selfFrame.origin, size: finalSize)
             DispatchQueue.main.async {
-                self?.setFrame(updatedFrame, display: true, animate: true)
                 self?.contentAspectRatio = finalSize
                 self?.aspectRatio = finalSize
+                self?.minSize = CGSize(width: finalSize.width * 0.25, height: finalSize.height * 0.25)
+                self?.setFrame(updatedFrame, display: true, animate: false)
             }
         }
-        NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: .main) { _ in
-            ASMediaManager.shared.deactivateView(byID: item.id)
+        NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: nil) { _ in
+            DispatchQueue.main.async {
+                ASMediaManager.shared.deactivateView(byID: item.id)
+            }
         }
     }
     

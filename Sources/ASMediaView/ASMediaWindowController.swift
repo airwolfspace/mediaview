@@ -7,7 +7,14 @@ class ASMediaWindowController: NSWindowController {
     init(withMediaItem item: ASMediaItem) {
         self.mediaItem = item
         let windowMaxSize = NSScreen.main?.frame.size ?? .windowMinSize
-        let windowRect = NSRect.zero
+        let windowRect: NSRect
+        if item.photoURLs != nil {
+            windowRect = NSRect(origin: .zero, size: item.calculatePhotoViewSize(forURLIndex: 0))
+        } else if item.audioURLs != nil {
+            windowRect = NSRect(origin: .zero, size: item.calculateAudioViewSize(forURLIndex: 0))
+        } else {
+            windowRect = NSRect.zero
+        }
         let aWindow = ASMediaWindow(withMediaItem: item, contentRect: windowRect)
         aWindow.maxSize = windowMaxSize
         aWindow.minSize = .windowMinSize

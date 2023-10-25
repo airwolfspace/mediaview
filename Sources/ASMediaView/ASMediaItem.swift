@@ -18,12 +18,10 @@ struct ASMediaItem: Identifiable {
     }
     
     func calculateAudioViewSize(forURLIndex index: Int) -> NSSize {
-        debugPrint("calculating audio view size at index: \(index) ...")
         return NSSize(width: 480, height: 320)
     }
     
     func calculatePhotoViewSize(forURLIndex index: Int) -> NSSize {
-        debugPrint("calculating photo view size at index: \(index) ...")
         guard let urls = self.photoURLs, urls.count > 0, urls.count > index, let photo = NSImage(contentsOfFile: urls[index].path) else { return .windowMinSize }
         let screenSize = NSScreen.main?.frame.size ?? .windowMinSize
         let photoRatio = photo.size.width / photo.size.height
@@ -47,7 +45,6 @@ struct ASMediaItem: Identifiable {
     }
     
     func calculateVideoPlayerSize(forURLIndex index: Int) async throws -> NSSize {
-        debugPrint("calculating video view size at index: \(index) ...")
         guard let urls = self.videoURLs, urls.count > 0, urls.count > index else { return .windowMinSize }
         let url = urls[index]
         guard let track = try await AVURLAsset(url: url).loadTracks(withMediaType: .video).first else { return .windowMinSize }
@@ -72,5 +69,16 @@ struct ASMediaItem: Identifiable {
         }
         return NSSize(width: bestSize.width, height: bestSize.height)
     }
-
+    
+    func getVideoThumbnail(forURLIndex index: Int) -> NSImage? {
+        guard let urls = self.videoURLs, urls.count > 0, urls.count > index else { return nil }
+        let url = urls[index]
+        let asset = AVURLAsset(url: url)
+        let imageGenerator = AVAssetImageGenerator(asset: asset)
+        imageGenerator.appliesPreferredTrackTransform = true
+        if let cgImage = try? imageGenerator.copyCGImage(at: .zero, actualTime: nil) {
+            return NSImage(cgImage: cgImage, size: .zero)
+        }
+        return nil
+    }
 }
