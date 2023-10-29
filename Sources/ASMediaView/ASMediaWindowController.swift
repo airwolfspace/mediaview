@@ -4,22 +4,36 @@ import Cocoa
 class ASMediaWindowController: NSWindowController {
     var mediaItem: ASMediaItem
 
-    init(withMediaItem item: ASMediaItem) {
+    init(withMediaItem item: ASMediaItem, andDefaultSize size: NSSize = CGSizeZero) {
         self.mediaItem = item
         let windowMaxSize = NSScreen.main?.frame.size ?? .windowMinSize
-        let windowRect: NSRect
-        if item.photoURLs != nil {
-            windowRect = NSRect(origin: .zero, size: item.calculatePhotoViewSize(forURLIndex: 0))
-        } else if item.audioURLs != nil {
-            windowRect = NSRect(origin: .zero, size: item.calculateAudioViewSize(forURLIndex: 0))
+        let targetSize: CGSize
+        if CGSizeEqualToSize(size, .zero) {
+            if item.photoURLs != nil {
+                targetSize = item.calculatePhotoViewSize(forURLIndex: 0)
+            } else if item.audioURLs != nil {
+                targetSize = item.calculateAudioViewSize(forURLIndex: 0)
+            } else {
+                targetSize = .windowMinSize
+            }
         } else {
-            windowRect = NSRect.zero
+            targetSize = size
         }
+        let targetWidth: CGFloat
+        if targetSize.width >= windowMaxSize.width {
+            targetWidth = windowMaxSize.width
+        } else {
+            targetWidth = targetSize.width
+        }
+        let targetHeight: CGFloat
+        if targetSize.height >= windowMaxSize.height {
+            targetHeight = windowMaxSize.height
+        } else {
+            targetHeight = targetSize.height
+        }
+        let windowRect: NSRect = NSRect(origin: .zero, size: CGSize(width: targetWidth, height: targetHeight))
         let aWindow = ASMediaWindow(withMediaItem: item, contentRect: windowRect)
-        aWindow.maxSize = windowMaxSize
-        aWindow.minSize = .windowMinSize
         super.init(window: aWindow)
-        self.window?.setFrameAutosaveName(item.id.uuidString)
     }
 
     required init?(coder: NSCoder) {

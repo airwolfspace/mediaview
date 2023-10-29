@@ -19,6 +19,17 @@ class ASMediaWindow: NSWindow {
         self.delegate = self
         self.contentAspectRatio = contentRect.size
         self.aspectRatio = contentRect.size
+        self.setFrameAutosaveName(item.id.uuidString)
+        self.setFrame(contentRect, display: false, animate: false)
+        var finalSize = contentRect.size
+        if finalSize.width < NSSize.windowMinSize.width {
+            finalSize.width = NSSize.windowMinSize.width
+        }
+        if finalSize.height < NSSize.windowMinSize.height {
+            finalSize.height = NSSize.windowMinSize.height
+        }
+        let minRatio = 0.4
+        self.minSize = CGSize(width: max(finalSize.width * minRatio, NSSize.windowMinSize.width), height: max(finalSize.height * minRatio, NSSize.windowMinSize.height))
         NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { [weak self] n in
             guard let value = n.object as? NSValue else { return }
             var finalSize = value.sizeValue
@@ -33,8 +44,8 @@ class ASMediaWindow: NSWindow {
             DispatchQueue.main.async {
                 self?.contentAspectRatio = finalSize
                 self?.aspectRatio = finalSize
-                self?.minSize = CGSize(width: finalSize.width * 0.25, height: finalSize.height * 0.25)
-                self?.setFrame(updatedFrame, display: true, animate: false)
+                self?.minSize = CGSize(width: max(finalSize.width * minRatio, NSSize.windowMinSize.width), height: max(finalSize.height * minRatio, NSSize.windowMinSize.height))
+                self?.setFrame(updatedFrame, display: true, animate: true)
             }
         }
         NotificationCenter.default.addObserver(forName: .closed(byID: item.id), object: nil, queue: nil) { _ in
