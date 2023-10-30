@@ -148,14 +148,6 @@ struct ASMediaView: View {
         }
         .task {
             currentPlayer = AVPlayer(url: urls[currentIndex])
-            do {
-                let videoItemSize = try await self.item.calculateVideoPlayerSize(forURLIndex: self.currentIndex)
-                await MainActor.run {
-                    self.currentMinSize = videoItemSize
-                }
-            } catch {
-                debugPrint("failed to calculate best video size: \(error)")
-            }
         }
     }
 }
