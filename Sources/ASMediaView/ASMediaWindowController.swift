@@ -19,19 +19,31 @@ class ASMediaWindowController: NSWindowController {
         } else {
             targetSize = size
         }
-        let targetWidth: CGFloat
+        let targetRatio = targetSize.width / targetSize.height
+        var targetWidth: CGFloat
+        var shouldAdjustSizeByTargetRatio: Bool = false
         if targetSize.width >= windowMaxSize.width {
             targetWidth = windowMaxSize.width
+            shouldAdjustSizeByTargetRatio = true
         } else {
             targetWidth = targetSize.width
         }
-        let targetHeight: CGFloat
+        var targetHeight: CGFloat
         if targetSize.height >= windowMaxSize.height {
             targetHeight = windowMaxSize.height
+            shouldAdjustSizeByTargetRatio = true
         } else {
             targetHeight = targetSize.height
         }
-        let windowRect: NSRect = NSRect(origin: .zero, size: CGSize(width: targetWidth, height: targetHeight))
+        if shouldAdjustSizeByTargetRatio {
+            if targetWidth > targetHeight {
+                targetHeight = targetHeight / targetRatio
+            } else {
+                targetWidth = targetHeight * targetRatio
+            }
+        }
+        let finalSize = NSSize(width: targetWidth, height: targetHeight)
+        let windowRect: NSRect = NSRect(origin: .zero, size: finalSize)
         let aWindow = ASMediaWindow(withMediaItem: item, contentRect: windowRect)
         super.init(window: aWindow)
     }
