@@ -41,6 +41,14 @@ class ASMediaWindowController: NSWindowController {
             } else {
                 targetWidth = targetHeight * targetRatio
             }
+            let currentRatio = targetWidth / targetHeight
+            if currentRatio != targetRatio {
+                if currentRatio > targetRatio {
+                    targetWidth = targetHeight * targetRatio
+                } else {
+                    targetHeight = targetWidth / targetRatio
+                }
+            }
         }
         let finalSize = NSSize(width: targetWidth, height: targetHeight)
         let windowRect: NSRect = NSRect(origin: .zero, size: finalSize)
