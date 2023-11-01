@@ -30,7 +30,7 @@ class ASMediaWindowController: NSWindowController {
         }
         var targetHeight: CGFloat
         if targetSize.height >= windowMaxSize.height {
-            targetHeight = windowMaxSize.height
+            targetHeight = windowMaxSize.height * 0.5
             shouldAdjustSizeByTargetRatio = true
         } else {
             targetHeight = targetSize.height
