@@ -69,16 +69,4 @@ struct ASMediaItem: Identifiable {
         }
         return NSSize(width: bestSize.width, height: bestSize.height)
     }
-    
-    func getVideoThumbnail(forURLIndex index: Int) -> NSImage? {
-        guard let urls = self.videoURLs, urls.count > 0, urls.count > index else { return nil }
-        let url = urls[index]
-        let asset = AVURLAsset(url: url)
-        let imageGenerator = AVAssetImageGenerator(asset: asset)
-        imageGenerator.appliesPreferredTrackTransform = true
-        if let cgImage = try? imageGenerator.copyCGImage(at: .zero, actualTime: nil) {
-            return NSImage(cgImage: cgImage, size: .zero)
-        }
-        return nil
-    }
 }
