@@ -39,8 +39,8 @@ class ASMediaWindow: NSWindow {
             if finalSize.height < NSSize.windowMinSize.height {
                 finalSize.height = NSSize.windowMinSize.height
             }
-            let selfFrame = self?.frame ?? .zero
-            let updatedFrame = NSRect(origin: selfFrame.origin, size: finalSize)
+            guard let selfFrame = self?.frame else { return }
+            guard let updatedFrame = self?.calculateCenteredFrame(fromFrame: selfFrame, andSize: finalSize) else { return }
             DispatchQueue.main.async {
                 self?.contentAspectRatio = finalSize
                 self?.aspectRatio = finalSize
@@ -57,6 +57,12 @@ class ASMediaWindow: NSWindow {
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+
+    private func calculateCenteredFrame(fromFrame frame: NSRect, andSize size: NSSize) -> NSRect {
+        let x = frame.origin.x + (frame.size.width - size.width) / 2
+        let y = frame.origin.y + (frame.size.height - size.height) / 2
+        return NSRect(origin: .init(x: x, y: y), size: size)
     }
 }
 
