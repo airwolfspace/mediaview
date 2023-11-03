@@ -72,6 +72,7 @@ class ASMediaWindowController: NSWindowController {
 
     override func showWindow(_ sender: Any?) {
         super.showWindow(sender)
+        self.window?.setFrameAutosaveName(mediaItem.id.uuidString)
         self.window?.positionCenter()
     }
     

@@ -29,7 +29,6 @@ struct ASMediaView: View {
                 containerView()
             }
         }
-        .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
         .edgesIgnoringSafeArea(.top)
     }
 

@@ -19,7 +19,6 @@ class ASMediaWindow: NSWindow {
         self.delegate = self
         self.contentAspectRatio = contentRect.size
         self.aspectRatio = contentRect.size
-        self.setFrameAutosaveName(item.id.uuidString)
         self.setFrame(contentRect, display: false, animate: false)
         var finalSize = contentRect.size
         if finalSize.width < NSSize.windowMinSize.width {
