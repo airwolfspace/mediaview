@@ -85,7 +85,7 @@ struct ASMediaView: View {
             let targetURL = urls[currentIndex]
             if targetURL.isSupportedPhoto(), let image = NSImage(contentsOfFile: targetURL.path) {
                 if image.isGIFImage() {
-                    ASMediaViewGIFAnimationView(image: image)
+                    ASMediaViewGIFAnimationView(imageURL: targetURL)
                 } else {
                     ASMediaViewStaticView(image: currentImage)
                 }

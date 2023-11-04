@@ -1,12 +1,8 @@
 import Cocoa
+import Quartz
 
 
-class ASMediaImageView: NSImageView {
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-        self.animates = true
-    }
-    
+class ASMediaGIFImageView: QLPreviewView {
     override var mouseDownCanMoveWindow: Bool {
         return true
     }
