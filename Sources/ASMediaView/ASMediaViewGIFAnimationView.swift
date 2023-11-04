@@ -12,7 +12,7 @@ struct ASMediaViewGIFAnimationView: NSViewRepresentable {
         preview?.previewItem = imageURL as QLPreviewItem
         return preview ?? ASMediaGIFImageView()
     }
-    
+
     func updateNSView(_ nsView: NSViewType, context: Context) {
         guard let preview = nsView as? ASMediaGIFImageView else { return }
         preview.previewItem = imageURL as QLPreviewItem

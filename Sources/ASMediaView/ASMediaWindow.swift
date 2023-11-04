@@ -71,4 +71,8 @@ extension ASMediaWindow: NSWindowDelegate {
         ASMediaManager.shared.deactivateView(byID: self.mediaItemID)
         return true
     }
+
+    func windowWillResize(_ sender: NSWindow, to frameSize: NSSize) -> NSSize {
+        return NSMakeSize(frameSize.width, frameSize.height)
+    }
 }
