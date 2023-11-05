@@ -4,6 +4,7 @@ import Cocoa
 class ASMediaWindow: NSWindow {
     var mediaItemID: UUID
     
+
     init(withMediaItem item: ASMediaItem, contentRect: NSRect) {
         self.mediaItemID = item.id
         super.init(contentRect: contentRect, styleMask: [.miniaturizable, .closable, .resizable, .titled, .fullSizeContentView], backing: .buffered, defer: true)
@@ -72,7 +73,15 @@ extension ASMediaWindow: NSWindowDelegate {
         return true
     }
 
-    func windowWillResize(_ sender: NSWindow, to frameSize: NSSize) -> NSSize {
-        return NSMakeSize(frameSize.width, frameSize.height)
+    func windowWillStartLiveResize(_ notification: Notification) {
+        guard let window = notification.object as? ASMediaWindow else { return }
+        let height: CGFloat
+        if let top =  window.contentView?.safeAreaInsets.top, top > 0 {
+            let sampleWindow = NSWindow(contentRect: .init(x: 0, y: 0, width: 1, height: 1), styleMask: .titled, backing: .buffered, defer: true)
+            height = sampleWindow.titlebarHeight
+        } else {
+            height = 0
+        }
+        window.contentView?.additionalSafeAreaInsets = .init(top: -height, left: 0, bottom: 0, right: 0)
     }
 }
