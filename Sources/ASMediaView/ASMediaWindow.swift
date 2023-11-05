@@ -30,6 +30,14 @@ class ASMediaWindow: NSWindow {
         }
         let minRatio = 0.4
         self.minSize = CGSize(width: max(finalSize.width * minRatio, NSSize.windowMinSize.width), height: max(finalSize.height * minRatio, NSSize.windowMinSize.height))
+        let topOffset: CGFloat
+        if let top =  self.contentView?.safeAreaInsets.top, top > 0 {
+            let sampleWindow = NSWindow(contentRect: .init(x: 0, y: 0, width: 1, height: 1), styleMask: .titled, backing: .buffered, defer: true)
+            topOffset = sampleWindow.titlebarHeight
+        } else {
+            topOffset = 0
+        }
+        self.contentView?.additionalSafeAreaInsets = .init(top: -topOffset, left: 0, bottom: 0, right: 0)
         NotificationCenter.default.addObserver(forName: .viewSizeChanged(byID: item.id), object: nil, queue: nil) { [weak self] n in
             guard let value = n.object as? NSValue else { return }
             var finalSize = value.sizeValue
@@ -71,17 +79,5 @@ extension ASMediaWindow: NSWindowDelegate {
     func windowShouldClose(_ sender: NSWindow) -> Bool {
         ASMediaManager.shared.deactivateView(byID: self.mediaItemID)
         return true
-    }
-
-    func windowWillStartLiveResize(_ notification: Notification) {
-        guard let window = notification.object as? ASMediaWindow else { return }
-        let height: CGFloat
-        if let top =  window.contentView?.safeAreaInsets.top, top > 0 {
-            let sampleWindow = NSWindow(contentRect: .init(x: 0, y: 0, width: 1, height: 1), styleMask: .titled, backing: .buffered, defer: true)
-            height = sampleWindow.titlebarHeight
-        } else {
-            height = 0
-        }
-        window.contentView?.additionalSafeAreaInsets = .init(top: -height, left: 0, bottom: 0, right: 0)
     }
 }

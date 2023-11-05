@@ -61,6 +61,9 @@ public class ASMediaManager: NSObject {
         let controller = ASMediaWindowController(withMediaItem: mediaItem, andDefaultSize: defaultSize)
         windowControllers.append(controller)
         controller.showWindow(nil)
+        if let window = controller.window, window.frame.origin.x == 0 {
+            window.positionCenter()
+        }
     }
     
     private func destroyWindowController(byID id: UUID) {
