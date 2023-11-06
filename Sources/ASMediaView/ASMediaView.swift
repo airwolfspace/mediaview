@@ -14,6 +14,7 @@ struct ASMediaView: View {
     @State private var currentIndex: Int
     @State private var currentImage: NSImage?
     @State private var currentPlayer: AVPlayer?
+    @State private var viewOpacity: CGFloat = 1.0
 
     init(withItem item: ASMediaItem) {
         self.item = item
@@ -35,10 +36,11 @@ struct ASMediaView: View {
     @ViewBuilder
     private func containerView() -> some View {
         ZStack {
-            Color.secondary.opacity(0.25)
+            Color.secondary
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             if let urls = item.photoURLs {
                 photosView(urls: urls)
+                    .opacity(viewOpacity)
             } else if let urls = item.videoURLs {
                 videosView(urls: urls)
             } else if let urls = item.audioURLs {
@@ -98,12 +100,23 @@ struct ASMediaView: View {
             ASMediaViewControlCloseView(id: item.id)
         }
         .onChange(of: currentIndex) { newValue in
+            let offset: UInt64 = 15000000
+            _ = withAnimation(.linear(duration: 0.15)) {
+                Task {
+                    viewOpacity = 0.25
+                    try? await Task.sleep(nanoseconds: offset)
+                    withAnimation(.linear(duration: 0.15)) {
+                        viewOpacity = 1.0
+                    }
+                }
+            }
             if let image = NSImage(contentsOfFile: urls[newValue].path) {
                 currentImage = image
             } else {
                 currentImage = nil
             }
             Task {
+                try? await Task.sleep(nanoseconds: offset)
                 let size = self.item.calculatePhotoViewSize(forURLIndex: self.currentIndex)
                 await MainActor.run {
                     self.currentMinSize = size
