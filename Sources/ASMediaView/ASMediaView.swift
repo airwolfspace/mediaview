@@ -100,12 +100,12 @@ struct ASMediaView: View {
             ASMediaViewControlCloseView(id: item.id)
         }
         .onChange(of: currentIndex) { newValue in
-            let offset: UInt64 = 15000000
-            _ = withAnimation(.linear(duration: 0.15)) {
+            let offset: UInt64 = 12500000
+            withAnimation(.linear(duration: 0.125)) {
+                viewOpacity = 0.5
                 Task {
-                    viewOpacity = 0.25
                     try? await Task.sleep(nanoseconds: offset)
-                    withAnimation(.linear(duration: 0.15)) {
+                    withAnimation(.linear(duration: 0.125)) {
                         viewOpacity = 1.0
                     }
                 }
