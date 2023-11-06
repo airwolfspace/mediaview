@@ -61,8 +61,8 @@ public class ASMediaManager: NSObject {
         let controller = ASMediaWindowController(withMediaItem: mediaItem, andDefaultSize: defaultSize)
         windowControllers.append(controller)
         controller.showWindow(nil)
-        if let window = controller.window, window.frame.origin.x == 0 {
-            window.positionCenter()
+        if let w = controller.window {
+            adjustInitialPosition(forWindow: w)
         }
     }
     
@@ -75,4 +75,67 @@ public class ASMediaManager: NSObject {
             return true
         })
     }
+
+    private func adjustInitialPosition(forWindow w: NSWindow) {
+        if dockIsHidden() {
+            if w.frame.origin == .zero {
+                w.positionCenter()
+            }
+        } else {
+            let position = currentDockPosition()
+            if position == .bottom {
+                if w.frame.origin.x == 0 && w.frame.origin.y == currentDockHeight() {
+                    w.positionCenter()
+                }
+            } else if position == .left {
+                if w.frame.origin.y == 0 && w.frame.origin.x == currentDockHeight() {
+                    w.positionCenter()
+                }
+            } else if position == .right {
+                if w.frame.origin == .zero {
+                    w.positionCenter()
+                }
+            }
+        }
+    }
+
+    private func currentDockPosition() -> DockPosition {
+        guard let screen = NSScreen.main else {
+            return .bottom
+        }
+        if screen.visibleFrame.origin.y == 0 {
+            if screen.visibleFrame.origin.x == 0 {
+                return .right
+            } else {
+                return .left
+            }
+        } else {
+            return .bottom
+        }
+    }
+
+    private func currentDockHeight() -> CGFloat {
+        guard let screen = NSScreen.main else {
+            return 0
+        }
+        switch currentDockPosition() {
+        case .bottom:
+            return screen.visibleFrame.origin.y
+        case .left:
+            return screen.visibleFrame.origin.x
+        case .right:
+            return screen.frame.width - screen.visibleFrame.width
+        }
+    }
+
+    private func dockIsHidden() -> Bool {
+        return currentDockHeight() < 25
+    }
+}
+
+
+private enum DockPosition: Int {
+    case left = 0
+    case right = 1
+    case bottom = 2
 }
