@@ -3,7 +3,10 @@ import Cocoa
 
 class ASMediaWindow: NSWindow {
     var mediaItemID: UUID
-    
+
+    override func animationResizeTime(_ newFrame: NSRect) -> TimeInterval {
+        return 0.25
+    }
 
     init(withMediaItem item: ASMediaItem, contentRect: NSRect) {
         self.mediaItemID = item.id
