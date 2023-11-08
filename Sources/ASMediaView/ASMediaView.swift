@@ -51,6 +51,9 @@ struct ASMediaView: View {
                 } else {
                     ASMediaViewUnsupportedView(fileURL: url)
                 }
+                if let urls = item.mixedURLs, urls.count > 1 {
+                    ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
+                }
             } else {
                 ASMediaViewPlaceholderView()
             }
@@ -86,16 +89,25 @@ struct ASMediaView: View {
             } else {
                 ASMediaViewUnsupportedView(fileURL: targetURL)
             }
-            if urls.count > 1 {
+            if item.mixedURLs == nil, urls.count > 1 {
                 ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
             }
             ASMediaViewControlCloseView(id: item.id)
         }
         .onChange(of: currentIndex) { newValue in
             currentPlayer?.pause()
-            currentPlayer = AVPlayer(url: urls[newValue])
+            if let url = self.item.mixedURLs?[newValue] {
+                currentPlayer = AVPlayer(url: url)
+            } else {
+                currentPlayer = AVPlayer(url: urls[newValue])
+            }
             Task {
-                let size = self.item.calculateAudioViewSize(forURLIndex: self.currentIndex)
+                let size: NSSize
+                if let url = self.item.mixedURLs?[self.currentIndex] {
+                    size = self.item.calculateAudioViewSize(forURL: url)
+                } else {
+                    size = self.item.calculateAudioViewSize(forURLIndex: self.currentIndex)
+                }
                 await MainActor.run {
                     self.currentMinSize = size
                 }
@@ -119,7 +131,7 @@ struct ASMediaView: View {
             } else {
                 ASMediaViewUnsupportedView(fileURL: targetURL)
             }
-            if urls.count > 1 {
+            if item.mixedURLs == nil, urls.count > 1 {
                 ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
             }
             ASMediaViewControlCloseView(id: item.id)
@@ -142,7 +154,12 @@ struct ASMediaView: View {
             }
             Task {
                 try? await Task.sleep(nanoseconds: offset)
-                let size = self.item.calculatePhotoViewSize(forURLIndex: self.currentIndex)
+                let size: NSSize
+                if let url = self.item.mixedURLs?[self.currentIndex] {
+                    size = self.item.calculatePhotoViewSize(forURL: url)
+                } else {
+                    size = self.item.calculatePhotoViewSize(forURLIndex: self.currentIndex)
+                }
                 await MainActor.run {
                     self.currentMinSize = size
                 }
@@ -164,19 +181,28 @@ struct ASMediaView: View {
             } else {
                 ASMediaViewUnsupportedView(fileURL: targetURL)
             }
-            if urls.count > 1 {
+            if item.mixedURLs == nil, urls.count > 1 {
                 ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
             }
             ASMediaViewControlCloseView(id: item.id)
         }
         .onChange(of: currentIndex) { newValue in
             currentPlayer?.pause()
-            currentPlayer = AVPlayer(url: urls[newValue])
+            if let url = self.item.mixedURLs?[newValue] {
+                currentPlayer = AVPlayer(url: url)
+            } else {
+                currentPlayer = AVPlayer(url: urls[newValue])
+            }
             Task {
                 do {
-                    let videoItemSize = try await self.item.calculateVideoPlayerSize(forURLIndex: self.currentIndex)
+                    let size: NSSize
+                    if let url = self.item.mixedURLs?[self.currentIndex] {
+                        size = try await self.item.calculateVideoPlayerSize(forURL: url)
+                    } else {
+                        size = try await self.item.calculateVideoPlayerSize(forURLIndex: self.currentIndex)
+                    }
                     await MainActor.run {
-                        self.currentMinSize = videoItemSize
+                        self.currentMinSize = size
                     }
                 } catch {
                     debugPrint("failed to calculate best video size: \(error)")
