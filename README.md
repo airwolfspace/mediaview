@@ -2,6 +2,7 @@
 
 A window controller based media viewer for local photos, videos and audios, for macOS.
 
+![](https://github.com/airwolfspace/mediaview/blob/main/media-view-1.1.gif)
 
 ## How to use
 ```
@@ -85,11 +86,3 @@ struct ContentView: View {
     }
 }
 ```
-
-
-## Work in progress
-- [x] Documentation
-- [x] Photo support (GIF animation)
-- [x] Video support
-- [x] Audio support
-- [x] Tests including UI Tests
