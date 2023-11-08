@@ -34,6 +34,15 @@ public class ASMediaManager: NSObject {
     }
 
     @MainActor
+    public func activateMediaView(withURLs urls: [URL], title: String, id: UUID, defaultSize: NSSize = .zero) {
+        if let controller = windowControllers.first(where: { $0.windowID() == id }) {
+            controller.window?.makeKeyAndOrderFront(nil)
+        } else {
+            addWindowController(withURLs: urls, title: title, id: id, defaultSize: defaultSize)
+        }
+    }
+
+    @MainActor
     public func deactivateView(byID id: UUID) {
         guard windowControllers.first(where: { $0.windowID() == id }) != nil else { return }
         destroyWindowController(byID: id)
@@ -58,6 +67,17 @@ public class ASMediaManager: NSObject {
     private func addWindowController(withPhotoURLs photoURLs: [URL]?, videoURLs: [URL]?, audioURLs: [URL]?, title: String, id: UUID, defaultSize: NSSize) {
         guard windowControllers.first(where: { $0.windowID() == id }) == nil else { return }
         let mediaItem = ASMediaItem(id: id, title: title, photoURLs: photoURLs, videoURLs: videoURLs, audioURLs: audioURLs)
+        let controller = ASMediaWindowController(withMediaItem: mediaItem, andDefaultSize: defaultSize)
+        windowControllers.append(controller)
+        controller.showWindow(nil)
+        if let w = controller.window {
+            adjustInitialPosition(forWindow: w)
+        }
+    }
+
+    private func addWindowController(withURLs urls: [URL], title: String, id: UUID, defaultSize: NSSize) {
+        guard windowControllers.first(where: { $0.windowID() == id }) == nil else { return }
+        let mediaItem = ASMediaItem(id: id, title: title, urls: urls)
         let controller = ASMediaWindowController(withMediaItem: mediaItem, andDefaultSize: defaultSize)
         windowControllers.append(controller)
         controller.showWindow(nil)

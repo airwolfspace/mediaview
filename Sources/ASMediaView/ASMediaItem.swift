@@ -8,7 +8,8 @@ struct ASMediaItem: Identifiable {
     var photoURLs: [URL]?
     var videoURLs: [URL]?
     var audioURLs: [URL]?
-    
+    var mixedURLs: [URL]?
+
     init(id: UUID, title: String, photoURLs: [URL]? = nil, videoURLs: [URL]? = nil, audioURLs: [URL]? = nil) {
         self.id = id
         self.title = title
@@ -16,7 +17,13 @@ struct ASMediaItem: Identifiable {
         self.videoURLs = videoURLs
         self.audioURLs = audioURLs
     }
-    
+
+    init(id: UUID, title: String, urls: [URL]) {
+        self.id = id
+        self.title = title
+        self.mixedURLs = urls
+    }
+
     func calculateAudioViewSize(forURLIndex index: Int) -> NSSize {
         return NSSize(width: 480, height: 320)
     }

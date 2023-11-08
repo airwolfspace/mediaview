@@ -34,6 +34,29 @@ struct ASMediaView: View {
     }
 
     @ViewBuilder
+    private func mixedContainerView() -> some View {
+        ZStack {
+            Color.secondary
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            if let url = item.mixedURLs?[currentIndex] {
+                if url.isSupportedPhoto() {
+                    photosView(urls: [url])
+                        .opacity(viewOpacity)
+                } else if url.isSupportedVideo() {
+                    videosView(urls: [url])
+                } else if url.isSupportedAudio() {
+                    audiosView(urls: [url])
+                } else {
+                    ASMediaViewUnsupportedView(fileURL: url)
+                }
+            } else {
+                ASMediaViewPlaceholderView()
+            }
+        }
+        .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
+    }
+
+    @ViewBuilder
     private func containerView() -> some View {
         ZStack {
             Color.secondary
