@@ -65,6 +65,8 @@ struct ASMediaView: View {
             guard let previousURL = item.mixedURLs?[currentIndex], let currentURL = item.mixedURLs?[newValue] else { return }
 
             let wasPhoto = previousURL.isSupportedPhoto()
+            let wasVideo = previousURL.isSupportedVideo()
+            let wasAudio = previousURL.isSupportedAudio()
 
             let isPhoto = currentURL.isSupportedPhoto()
             let isVideo = currentURL.isSupportedVideo()
@@ -84,21 +86,30 @@ struct ASMediaView: View {
                 }
             }
 
+            if wasPhoto && !isPhoto {
+                currentImage = nil
+            }
             if isPhoto {
                 currentImage = NSImage(contentsOfFile: currentURL.path)
             }
 
+            if wasVideo {
+                currentPlayer?.pause()
+            }
             if isVideo {
                 currentPlayer?.pause()
                 currentPlayer = AVPlayer(url: currentURL)
             }
 
+            if wasAudio {
+                currentPlayer?.pause()
+            }
             if isAudio {
                 currentPlayer?.pause()
                 currentPlayer = AVPlayer(url: currentURL)
             }
 
-            Task {
+            Task(priority: .userInitiated) {
                 if wasPhoto && isPhoto {
                     try? await Task.sleep(nanoseconds: offset)
                 }
