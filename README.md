@@ -50,6 +50,27 @@ struct ContentView: View {
                 Text("Multiple Videos")
             }
             
+            // Launch media view for single audio:
+            Button {
+                ASMediaManager.shared.activateAudioView(withAudios: [mp3], title: "One MP3", id: Self.oneID8)
+            } label: {
+                Text("One MP3")
+            }
+            
+            // Launch media view for multiple audios:
+            Button {
+                ASMediaManager.shared.activateAudioView(withAudios: [mp3, otherMp3], title: "Two MP3", id: Self.multipleID14)
+            } label: {
+                Text("Two MP3")
+            }
+            
+            // Launch media view for mixed media types, and init window size:
+            Button {
+                ASMediaManager.shared.activateMediaView(withURLs: [mp3, video, gif1, png, gif3, unsupported], title: "Mixed Videos, Photos and Audios", id: Self.multipleID17, defaultSize: NSSize(width: 480, height: 320))
+            } label: {
+                Text("Mixed Videos, Photos and Audios")
+            }
+            
             Divider()
             
             // Close all media views:

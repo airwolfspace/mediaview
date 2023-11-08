@@ -35,6 +35,8 @@ struct ASMediaView: View {
         .edgesIgnoringSafeArea(.top)
     }
 
+    // MARK: -
+
     @ViewBuilder
     private func mixedContainerView() -> some View {
         ZStack {
@@ -42,23 +44,91 @@ struct ASMediaView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             if let url = item.mixedURLs?[currentIndex] {
                 if url.isSupportedPhoto() {
-                    photosView(urls: [url])
-                        .opacity(viewOpacity)
+                    photoView(url: url)
                 } else if url.isSupportedVideo() {
-                    videosView(urls: [url])
+                    videoView(url: url)
                 } else if url.isSupportedAudio() {
-                    audiosView(urls: [url])
+                    audioView(url: url)
                 } else {
                     ASMediaViewUnsupportedView(fileURL: url)
-                }
-                if let urls = item.mixedURLs, urls.count > 1 {
-                    ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
                 }
             } else {
                 ASMediaViewPlaceholderView()
             }
+            if let urls = item.mixedURLs, urls.count > 1 {
+                ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
+            }
         }
+        .opacity(viewOpacity)
         .frame(idealWidth: currentMinSize.width, idealHeight: currentMinSize.height)
+        .onChange(of: currentIndex) { [currentIndex] newValue in
+            guard let previousURL = item.mixedURLs?[currentIndex], let currentURL = item.mixedURLs?[newValue] else { return }
+
+            let wasPhoto = previousURL.isSupportedPhoto()
+
+            let isPhoto = currentURL.isSupportedPhoto()
+            let isVideo = currentURL.isSupportedVideo()
+            let isAudio = currentURL.isSupportedAudio()
+
+            let offset: UInt64 = 25000000
+
+            if wasPhoto && isPhoto {
+                withAnimation(.linear(duration: 0.125)) {
+                    viewOpacity = 0.5
+                    Task {
+                        try? await Task.sleep(nanoseconds: offset)
+                        withAnimation(.linear(duration: 0.125)) {
+                            viewOpacity = 1.0
+                        }
+                    }
+                }
+            }
+
+            if isPhoto {
+                currentImage = NSImage(contentsOfFile: currentURL.path)
+            }
+
+            if isVideo {
+                currentPlayer?.pause()
+                currentPlayer = AVPlayer(url: currentURL)
+            }
+
+            if isAudio {
+                currentPlayer?.pause()
+                currentPlayer = AVPlayer(url: currentURL)
+            }
+
+            Task {
+                if wasPhoto && isPhoto {
+                    try? await Task.sleep(nanoseconds: offset)
+                }
+
+                if isPhoto {
+                    let size: NSSize = self.item.calculatePhotoViewSize(forURL: currentURL)
+                    await MainActor.run {
+                        self.currentMinSize = size
+                    }
+                }
+
+                if isVideo {
+                    do {
+                        let size: NSSize = try await self.item.calculateVideoPlayerSize(forURL: currentURL)
+                        await MainActor.run {
+                            self.currentMinSize = size
+                        }
+                    } catch {
+                        debugPrint("failed to calculate best video size: \(error)")
+                    }
+                }
+
+                if isAudio {
+                    let size: NSSize = self.item.calculateAudioViewSize(forURL: currentURL)
+                    await MainActor.run {
+                        self.currentMinSize = size
+                    }
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -119,6 +189,21 @@ struct ASMediaView: View {
     }
 
     @ViewBuilder
+    private func audioView(url: URL) -> some View {
+        ZStack {
+            if url.isSupportedAudio() {
+                VideoPlayer(player: AVPlayer(url: url))
+            } else {
+                ASMediaViewUnsupportedView(fileURL: url)
+            }
+            ASMediaViewControlCloseView(id: item.id)
+        }
+        .task {
+            currentPlayer = AVPlayer(url: url)
+        }
+    }
+
+    @ViewBuilder
     private func photosView(urls: [URL]) -> some View {
         ZStack {
             let targetURL = urls[currentIndex]
@@ -166,12 +251,29 @@ struct ASMediaView: View {
             }
         }
         .task {
-            if let image = NSImage(contentsOfFile: urls[currentIndex].path) {
-                currentImage = image
-            }
+            currentImage = NSImage(contentsOfFile: urls[currentIndex].path)
         }
     }
-    
+
+    @ViewBuilder
+    private func photoView(url: URL) -> some View {
+        ZStack {
+            if url.isSupportedPhoto(), let image = NSImage(contentsOfFile: url.path) {
+                if image.isGIFImage() {
+                    ASMediaViewGIFAnimationView(imageURL: url)
+                } else {
+                    ASMediaViewStaticView(image: currentImage)
+                }
+            } else {
+                ASMediaViewUnsupportedView(fileURL: url)
+            }
+            ASMediaViewControlCloseView(id: item.id)
+        }
+        .task {
+            currentImage = NSImage(contentsOfFile: url.path)
+        }
+    }
+
     @ViewBuilder
     private func videosView(urls: [URL]) -> some View {
         ZStack {
@@ -211,6 +313,21 @@ struct ASMediaView: View {
         }
         .task {
             currentPlayer = AVPlayer(url: urls[currentIndex])
+        }
+    }
+
+    @ViewBuilder
+    private func videoView(url: URL) -> some View {
+        ZStack {
+            if url.isSupportedVideo(), let currentPlayer {
+                VideoPlayer(player: currentPlayer)
+            } else {
+                ASMediaViewUnsupportedView(fileURL: url)
+            }
+            ASMediaViewControlCloseView(id: item.id)
+        }
+        .task {
+            currentPlayer = AVPlayer(url: url)
         }
     }
 }
