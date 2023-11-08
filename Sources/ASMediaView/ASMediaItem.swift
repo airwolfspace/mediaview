@@ -27,9 +27,18 @@ struct ASMediaItem: Identifiable {
     func calculateAudioViewSize(forURLIndex index: Int) -> NSSize {
         return NSSize(width: 480, height: 320)
     }
-    
+
+    func calculateAudioViewSize(forURL url: URL) -> NSSize {
+        return NSSize(width: 480, height: 320)
+    }
+
     func calculatePhotoViewSize(forURLIndex index: Int) -> NSSize {
-        guard let urls = self.photoURLs, urls.count > 0, urls.count > index, let photo = NSImage(contentsOfFile: urls[index].path) else { return .windowMinSize }
+        guard let urls = self.photoURLs, urls.count > 0, urls.count > index else { return .windowMinSize }
+        return calculatePhotoViewSize(forURL: urls[index])
+    }
+
+    func calculatePhotoViewSize(forURL url: URL) -> NSSize {
+        guard let photo = NSImage(contentsOfFile: url.path) else { return .windowMinSize }
         let screenSize = NSScreen.main?.frame.size ?? .windowMinSize
         let photoRatio = photo.size.width / photo.size.height
         let photoIsLandscape: Bool = photo.size.width > photo.size.height
@@ -50,10 +59,13 @@ struct ASMediaItem: Identifiable {
         }
         return .windowMinSize
     }
-    
+
     func calculateVideoPlayerSize(forURLIndex index: Int) async throws -> NSSize {
         guard let urls = self.videoURLs, urls.count > 0, urls.count > index else { return .windowMinSize }
-        let url = urls[index]
+        return try await calculateVideoPlayerSize(forURL: urls[index])
+    }
+
+    func calculateVideoPlayerSize(forURL url: URL) async throws -> NSSize {
         guard let track = try await AVURLAsset(url: url).loadTracks(withMediaType: .video).first else { return .windowMinSize }
         let size = try await track.load(.naturalSize).applying(track.load(.preferredTransform))
         let ratio = NSScreen.main?.backingScaleFactor ?? 1.0

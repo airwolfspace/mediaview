@@ -9,12 +9,22 @@ class ASMediaWindowController: NSWindowController {
         let windowMaxSize = NSScreen.main?.frame.size ?? .windowMinSize
         let targetSize: CGSize
         if CGSizeEqualToSize(size, .zero) {
-            if item.photoURLs != nil {
-                targetSize = item.calculatePhotoViewSize(forURLIndex: 0)
-            } else if item.audioURLs != nil {
-                targetSize = item.calculateAudioViewSize(forURLIndex: 0)
+            if let urls = item.mixedURLs, let url = urls.first {
+                if url.isSupportedPhoto() {
+                    targetSize = item.calculatePhotoViewSize(forURL: url)
+                } else if url.isSupportedAudio() {
+                    targetSize = item.calculateAudioViewSize(forURL: url)
+                } else {
+                    targetSize = .windowMinSize
+                }
             } else {
-                targetSize = .windowMinSize
+                if item.photoURLs != nil {
+                    targetSize = item.calculatePhotoViewSize(forURLIndex: 0)
+                } else if item.audioURLs != nil {
+                    targetSize = item.calculateAudioViewSize(forURLIndex: 0)
+                } else {
+                    targetSize = .windowMinSize
+                }
             }
         } else {
             targetSize = size

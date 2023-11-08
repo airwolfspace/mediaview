@@ -24,7 +24,9 @@ struct ASMediaView: View {
 
     var body: some View {
         Group {
-            if item.photoURLs == nil && item.audioURLs == nil && item.videoURLs == nil {
+            if item.mixedURLs != nil {
+                mixedContainerView()
+            } else if item.photoURLs == nil && item.audioURLs == nil && item.videoURLs == nil {
                 ASMediaViewPlaceholderView()
             } else {
                 containerView()
