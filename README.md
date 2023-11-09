@@ -2,7 +2,7 @@
 
 A window controller based media viewer for local photos, videos and audios, for macOS.
 
-![](https://github.com/airwolfspace/mediaview/blob/main/media-view-1.1.gif)
+![](https://github.com/airwolfspace/mediaview/blob/main/media-view-preview.gif)
 
 ## How to use
 ```
