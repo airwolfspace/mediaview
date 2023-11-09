@@ -62,6 +62,10 @@ public class ASMediaManager: NSObject {
         return image.isGIFImage()
     }
 
+    public func isSupportedVideo(url: URL) -> Bool {
+        return url.isSupportedVideo()
+    }
+
     // MARK: - private
 
     private func addWindowController(withPhotoURLs photoURLs: [URL]?, videoURLs: [URL]?, audioURLs: [URL]?, title: String, id: UUID, defaultSize: NSSize) {
