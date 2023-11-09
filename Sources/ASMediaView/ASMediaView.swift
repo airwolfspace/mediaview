@@ -51,12 +51,14 @@ struct ASMediaView: View {
                     audioView(url: url)
                 } else {
                     ASMediaViewUnsupportedView(fileURL: url)
+                    ASMediaViewControlCloseView(id: item.id)
                 }
             } else {
                 ASMediaViewPlaceholderView()
             }
             if let urls = item.mixedURLs, urls.count > 1 {
                 ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
+                pageControl(urls: urls)
             }
         }
         .opacity(viewOpacity)
@@ -172,6 +174,7 @@ struct ASMediaView: View {
             }
             if item.mixedURLs == nil, urls.count > 1 {
                 ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
+                pageControl(urls: urls)
             }
             ASMediaViewControlCloseView(id: item.id)
         }
@@ -229,6 +232,7 @@ struct ASMediaView: View {
             }
             if item.mixedURLs == nil, urls.count > 1 {
                 ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
+                pageControl(urls: urls)
             }
             ASMediaViewControlCloseView(id: item.id)
         }
@@ -296,6 +300,7 @@ struct ASMediaView: View {
             }
             if item.mixedURLs == nil, urls.count > 1 {
                 ASMediaViewControlView(id: item.id, urls: urls, currentMinSize: $currentMinSize, currentIndex: $currentIndex)
+                pageControl(urls: urls)
             }
             ASMediaViewControlCloseView(id: item.id)
         }
@@ -339,6 +344,26 @@ struct ASMediaView: View {
         }
         .task {
             currentPlayer = AVPlayer(url: url)
+        }
+    }
+
+    @ViewBuilder
+    private func pageControl(urls: [URL]) -> some View {
+        VStack {
+            Spacer()
+            HStack {
+                Spacer()
+                ForEach(0..<urls.count, id: \.self) { index in
+                    Circle()
+                        .fill(Color.white.opacity(index == currentIndex ? 1.0 : 0.5))
+                        .frame(width: 8, height: 8)
+                        .onTapGesture {
+                            currentIndex = index
+                        }
+                }
+                Spacer()
+            }
+            .padding(.bottom, 10)
         }
     }
 }
