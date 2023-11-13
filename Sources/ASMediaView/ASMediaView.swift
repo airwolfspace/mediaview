@@ -40,8 +40,6 @@ struct ASMediaView: View {
     @ViewBuilder
     private func mixedContainerView() -> some View {
         ZStack {
-            Color.secondary
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             if let url = item.mixedURLs?[currentIndex] {
                 if url.isSupportedPhoto() {
                     photoView(url: url)
@@ -147,8 +145,6 @@ struct ASMediaView: View {
     @ViewBuilder
     private func containerView() -> some View {
         ZStack {
-            Color.secondary
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
             if let urls = item.photoURLs {
                 photosView(urls: urls)
                     .opacity(viewOpacity)
