@@ -35,7 +35,6 @@ struct ASMediaViewUnsupportedView: View {
             .padding(.top, 6)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        // TODO: If set a idealWidth/idealHeight, when mixing with GIFs, the window would move in unexpected ways.
     }
     
     private func fileIcon() -> NSImage? {

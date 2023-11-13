@@ -17,7 +17,7 @@ extension NSWindow {
 
 
 extension NSSize {
-    static let windowMinSize = NSSize(width: 240, height: 180)
+    static let windowMinSize = NSSize(width: 320, height: 240)
 }
 
 
